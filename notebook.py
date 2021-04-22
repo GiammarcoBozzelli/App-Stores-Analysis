@@ -5,7 +5,8 @@ import os
 import os.path
 
 #%%
-
+#Get file 'playstore.csv' and remove all columns not useful in answering the first research question
+# 
 print(os.getcwd())
 frame = pd.read_csv(os.path.join( os.getcwd(), 'playstore.csv'))
 frame = frame.drop(columns=['id'])
