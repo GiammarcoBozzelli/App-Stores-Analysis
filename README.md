@@ -22,8 +22,6 @@ key = ‘Categoria’,
 values =[(rating,n°reviews),(rating,n°reviews),(rating,n°reviews),(rating,n°reviews)...]
 Media ponderata (in base al n°reviews) per rating, sostituendo list of tuples con media ponderata.
 
-Problema: fare le tuples!
-Una volta pronte basta sostituire i valori e otteniamo i risultati.
 Confrontare i risultati in base agli stores
 ### Does it change between different stores?
 
@@ -45,11 +43,9 @@ Prima di determinare l'effettiva risposta ci aspettiamo che il grafico sia una f
 Una volta risolta la domanda vediamo se il pronostico è corretto o no.
 
 
-                                                              ?
-
-
 ## Question n. 4
 ### Does users’ rating depend on price?
+
 
 ## Question n. 5
 ### Do most popular apps have some characteristics in common?
