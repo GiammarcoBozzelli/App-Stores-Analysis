@@ -26,8 +26,8 @@ Confrontare i risultati in base agli stores
 ### Does it change between different stores?
 
 
-##Question n. 2
-###For which App Category are users willing to pay more?
+## Question n. 2
+### For which App Category are users willing to pay more?
 
 Stessa risoluzione del punto 1 con:
 -dati relativi soltanto alle applicazioni a pagamento (escludere app gratis)
