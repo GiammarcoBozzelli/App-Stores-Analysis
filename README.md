@@ -3,7 +3,8 @@
 Databases:
 [Appstore_coding - Google Drive](https://drive.google.com/drive/folders/1WpJfuIUlIh2z5hbM_b9GL8sOLfwKgE_n?usp=sharing)
 ___
-- [ ] Which App Category do users prefer? Does it change between different stores?
+
+- [x] Which App Category do users prefer? Does it change between different stores?
 - [ ] For which App Category are users willing to pay more?
 - [ ] Does users’ rating depend on price?
 - [ ] Does users’ rating depend on price?
