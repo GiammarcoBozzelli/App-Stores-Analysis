@@ -18,4 +18,4 @@ playstore.isna().sum() #number of cells with NAN values per each column
 #Group all data per category and visualize how many apps are in each category 
 
 grouped = playstore.groupby('category')#group data by 'category'
-print(grouped.agg(np.size)) #print the number of apps per category
+print(grouped.agg(np.size)['name']) #print the number of apps per category
