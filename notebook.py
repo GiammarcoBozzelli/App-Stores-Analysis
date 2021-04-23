@@ -40,7 +40,7 @@ action_rating = action['weighted_rating'].sum() / action['installs'].sum()
 action_rating
 
 #%%
-#Calculating the actual rating for each category 
+#Calculating the actual rating for each category
 categories = set(playstore['category'].tolist()) #getting all category types
 category_rating_dic = {} #dict to contain the rating for each category type
 for category in categories: #filling the dictionary
@@ -48,3 +48,10 @@ for category in categories: #filling the dictionary
     rating = cat['weighted_rating'].sum() / cat['installs'].sum() #calculating the rating wrt n. of installs
     category_rating_dic[category] = rating #adding the new key:value to the dictionary
 print(category_rating_dic)
+
+#%%
+# making a bar char with the top 5 categories
+import matplotlib.pyplot as plt
+d = sorted(category_rating_dic.items(), key=lambda xy:xy[1], reverse = True)[:6]
+plt.bar([x[0] for x in d], [x[1] for x in d])
+plt.show()
