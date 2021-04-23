@@ -32,3 +32,9 @@ playstore['installs']
 #add a column ['weighted_rating'] that will be useful in dentifying a more precise mean rating per each category
 playstore.loc[:,'weghted_rating'] = playstore['rating'] * playstore['installs']
 playstore
+
+#%%
+#selecting rows wrt category type
+action = playstore.loc[playstore['category'] == 'Action']
+action_rating = action['weighted_rating'].sum() / action['installs'].sum()
+action_rating
