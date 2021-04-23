@@ -38,3 +38,13 @@ playstore
 action = playstore.loc[playstore['category'] == 'Action']
 action_rating = action['weighted_rating'].sum() / action['installs'].sum()
 action_rating
+
+#%%
+#Calculating the actual rating for each category 
+categories = set(playstore['category'].tolist()) #getting all category types
+category_rating_dic = {} #dict to contain the rating for each category type
+for category in categories: #filling the dictionary
+    cat = playstore.loc[playstore['category'] == category] #choosing the single category
+    rating = cat['weighted_rating'].sum() / cat['installs'].sum() #calculating the rating wrt n. of installs
+    category_rating_dic[category] = rating #adding the new key:value to the dictionary
+print(category_rating_dic)
