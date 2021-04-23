@@ -9,7 +9,7 @@ import os.path
 
 frame = pd.read_csv(os.path.join( os.getcwd(), 'playstore.csv')) #open as DataFrame the file
 frame.columns #checking all columns' labels
-playstore = frame.loc[:,['name','category','rating','reviews','price','size','installs']]
+playstore = frame.loc[:, ['name', 'category', 'rating', 'installs' ]]
 playstore.info
 #playstore
 #%%
