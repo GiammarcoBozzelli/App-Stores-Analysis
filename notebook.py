@@ -9,9 +9,7 @@ import os.path
 
 frame = pd.read_csv(os.path.join( os.getcwd(), 'playstore.csv')) #open as DataFrame the file
 frame.columns #checking all columns' labels
-playstore = frame.drop(columns=['id']) #removing all columns we do not need
-playstore.drop(playstore.loc[:,'rate_5_pc':'updated'], inplace = True, axis = 1)
-playstore.drop(playstore.loc[:,'current_version':'in_app_products'], inplace = True, axis = 1)
+playstore = frame.loc[:,['name','category','rating','reviews','price','size','installs']]
 #playstore.info
 #playstore
 playstore.isna().sum() #number of cells with NAN values per each column
