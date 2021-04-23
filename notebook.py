@@ -16,6 +16,7 @@ playstore.drop(playstore.loc[:,'current_version':'in_app_products'], inplace = T
 playstore
 
 #%%
-#group all data per category and visualize how many apps are in each category 
+#Group all data per category and visualize how many apps are in each category 
+
 grouped = playstore.groupby('category')#group data by 'category'
 print(grouped.agg(np.size)) #print the number of apps per category
