@@ -13,7 +13,8 @@ playstore = frame.drop(columns=['id']) #removing all columns we do not need
 playstore.drop(playstore.loc[:,'rate_5_pc':'updated'], inplace = True, axis = 1)
 playstore.drop(playstore.loc[:,'current_version':'in_app_products'], inplace = True, axis = 1)
 #playstore.info
-playstore
+#playstore
+playstore.isna().sum() #number of cells with NAN values per each column
 
 #%%
 #Group all data per category and visualize how many apps are in each category 
