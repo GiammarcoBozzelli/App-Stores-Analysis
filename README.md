@@ -23,8 +23,7 @@ ___
 categoria preferita ->per le categorie, i rating più alti
 Selezionare le categorie, per app nella categoria fare la media dei ratings. Ordinare i valori dal più alto al più basso in relazione alla categoria
 
-Dizionari per diverso store:
-groupby('category) -> all apps grouped by category
+groupby(*category*) -> all apps grouped by category
 Media ponderata (in base al n°reviews) per rating, sostituendo list of tuples con media ponderata.
 
 Confrontare i risultati in base agli stores
