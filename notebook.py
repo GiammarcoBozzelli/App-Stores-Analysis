@@ -14,3 +14,5 @@ playstore.drop(playstore.loc[:,'rate_5_pc':'updated'], inplace = True, axis = 1)
 playstore.drop(playstore.loc[:,'current_version':'in_app_products'], inplace = True, axis = 1)
 #playstore.info
 playstore
+grouped = playstore.groupby('category')#group data by 'category'
+print(grouped.agg(np.size)) #print the number of apps per category
