@@ -12,7 +12,7 @@ ___
 ## ⚠️ What to do? ⚠️
 - Do **not** modify the notebook.py file directly
 - Copy the content of notebook.py in a new notebook in PyCharm and work from there
-- Remember to rename the file with extension '.ipynb'
+- Remember to rename the file with extension '.ipynb' before opening it
 - Modify the notebook in GitHub **only** when things work in PyCharm
 - Remember to comment the lines of code (this will help for the exam)
 
