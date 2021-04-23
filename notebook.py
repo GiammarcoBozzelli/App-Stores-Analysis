@@ -23,3 +23,12 @@ playstore.info()
 
 grouped = playstore.groupby('category')#group data by 'category'
 print(grouped.agg(np.size)['name']) #print the number of apps per category
+
+#%%
+#Replace each ',' in the 'installs' column with '' in order to convert it in float64
+playstore['installs'] = np.float64(playstore['installs'].str.replace(',',''))
+playstore['installs']
+
+#add a column ['weighted_rating'] that will be useful in dentifying a more precise mean rating per each category
+playstore.loc[:,'weghted_rating'] = playstore['rating'] * playstore['installs']
+playstore
