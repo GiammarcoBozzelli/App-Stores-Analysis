@@ -8,7 +8,7 @@ import os
 import os.path
 
 #%%
-
+#PLAYSTORE -> Giammarco
 frame = pd.read_csv(os.path.join( os.getcwd(), 'playstore.csv')) #open as DataFrame the file
 print(frame.columns) #checking all columns' labels
 playstore = frame.loc[:, ['name', 'category', 'rating', 'installs' ]]
@@ -48,7 +48,7 @@ plt.bar([x[0] for x in d], [x[1] for x in d],log = True) # use log = True to mak
 plt.show()
 
 #%%
-#MICROSOFT STORE
+#MICROSOFT STORE -> Marco
 frame2 = pd.read_csv(os.path.join(os.getcwd(), 'windows_store.csv')) #open as DataFrame the file
 print(frame2.columns) #checking all columns' labels
 windowstore = frame.loc[:, ['name', 'category', 'rating', 'reviews' ]]
