@@ -50,7 +50,7 @@ Una volta risolta la domanda vediamo se il pronostico è corretto o no.
 
 ___
 ## Question n. 4
-### Does users’ rating depend on price?
+### Do ratings, popularity and prices depend on applications' size?
 
 ___
 ## Question n. 5
