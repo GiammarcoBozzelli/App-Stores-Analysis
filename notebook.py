@@ -30,7 +30,6 @@ playstore['installs']
 playstore.loc[:,'weighted_rating'] = playstore['rating'] * playstore['installs']
 playstore
 
-
 #%%
 #Calculating the actual rating for each category
 categories = set(playstore['category'].tolist()) #getting all category types
