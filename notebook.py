@@ -9,7 +9,7 @@ import os.path
 import appstore as app
 
 #%%
-app.bar_chart(app.top_categories('playstore.csv'))
+app.bar_chart(app.top_categories('playstore.csv')) #printing top 5 categories and bar chart representing it
 
 #%%
 app.bar_chart(app.top_categories('windows_store.csv'))
