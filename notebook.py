@@ -5,6 +5,24 @@ import numpy as np
 import pandas as pd
 import os
 import os.path
+'''
+#%%
+#Alternative Version using appstore.py as module
+import csv
+import json
+import numpy as np
+import pandas as pd
+import os.path
+import appstore as app
+
+#%%
+app.bar_chart(app.top_categories('playstore.csv'))
+
+#%%
+app.bar_chart(app.top_categories('windows_store.csv'))
+
+#%%
+app.bar_chart(app.top_categories('AppleStore.csv'))'''
 
 #%%
 #PLAYSTORE -> Giammarco
