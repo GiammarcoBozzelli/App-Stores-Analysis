@@ -1,10 +1,4 @@
-#%%
 
-import csv
-import numpy as np
-import pandas as pd
-import os
-import os.path
 '''
 #%%
 #Alternative Version using appstore.py as module
@@ -24,6 +18,13 @@ app.bar_chart(app.top_categories('windows_store.csv'))
 #%%
 app.bar_chart(app.top_categories('AppleStore.csv'))'''
 
+#%%
+#Present Version
+import csv
+import numpy as np
+import pandas as pd
+import os
+import os.path
 #%%
 #PLAYSTORE -> Giammarco
 frame = pd.read_csv(os.path.join( os.getcwd(), 'playstore.csv')) #open as DataFrame the file
