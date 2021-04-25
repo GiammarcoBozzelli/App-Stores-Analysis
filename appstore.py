@@ -23,7 +23,7 @@ def top_categories (file): #returns the
     # add a column ['weighted_rating'] that will be useful in dentifying a more precise mean rating per each category
     file_name.loc[:, 'weighted_rating'] = file_name['rating'] * file_name['installs']
 
-    # %%
+   # %%
     # Calculating the actual rating for each category
     categories = set(file_name['category'].tolist())  # getting all category types
     category_rating_dic = {}  # dict to contain the rating for each category type
@@ -31,11 +31,11 @@ def top_categories (file): #returns the
         cat = file_name.loc[file_name['category'] == category]  # choosing the single category
         rating = cat['weighted_rating'].sum() / cat['installs'].sum()  # calculating the rating wrt n. of installs
         category_rating_dic[category] = rating  # adding the new key:value to the dictionary
-    print( f'The top 5 categories for {file} are: ', sorted(category_rating_dic.items(), key=lambda xy: xy[1], reverse=True)[:5])
     return(category_rating_dic)
 
 def bar_chart (category_rating_dic):
     # making a bar char with the top 5 categories
     d = sorted(category_rating_dic.items(), key=lambda xy: xy[1], reverse=True)[:5]
+    print('The top 5 categories are:', d)
     plt.bar([x[0] for x in d], [x[1] for x in d], log=True)# use log = True to make the graph more evident
     plt.show()
