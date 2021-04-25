@@ -1,5 +1,4 @@
 
-'''
 #%%
 #Alternative Version using appstore.py as module
 import csv
@@ -16,8 +15,9 @@ app.bar_chart(app.top_categories('playstore.csv'))
 app.bar_chart(app.top_categories('windows_store.csv'))
 
 #%%
-app.bar_chart(app.top_categories('AppleStore.csv'))'''
+app.bar_chart(app.top_categories('AppleStore.csv'))
 
+'''
 #%%
 #Present Version
 import csv
@@ -130,3 +130,4 @@ import matplotlib.pyplot as plt
 d = sorted(category_rating_dic3.items(), key=lambda xy:xy[1], reverse = True)[:6]
 plt.bar([x[0] for x in d], [x[1] for x in d],log = True) # use log = True to make the graph more evident
 plt.show()
+'''
