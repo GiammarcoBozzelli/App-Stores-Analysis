@@ -5,7 +5,7 @@ import numpy as np
 import os.path
 import matplotlib.pyplot as plt
 
-def top_categories (file): #returns the
+def top_categories (file): #returns the dictionary with categories as keys and medium rate as value
     try: # open as DataFrame the file depending from the extension
         frame = pd.read_csv(os.path.join(os.getcwd(), file))
     except:
