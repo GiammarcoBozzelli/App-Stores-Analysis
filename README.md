@@ -17,6 +17,9 @@ ___
 - Modify the notebook in GitHub **only** when things work in PyCharm
 - Remember to comment the lines of code (this will help for the exam)
 
+## Domande prof:
+- Cambiare nomi categorie a mano o con python?
+- 
 ___
   
 ## Question n. 1
