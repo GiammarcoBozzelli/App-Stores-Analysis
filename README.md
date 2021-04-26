@@ -19,7 +19,7 @@ ___
 
 ## Domande prof:
 - Cambiare nomi categorie a mano o con python?
-- 
+- Al FRA: omertà o non omertà? (post aperitivo)
 ___
   
 ## Question n. 1
