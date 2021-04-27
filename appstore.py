@@ -38,4 +38,5 @@ def bar_chart (category_rating_dic):
     d = sorted(category_rating_dic.items(), key=lambda xy: xy[1], reverse=True)[:5]
     print('The top 5 categories are:', d)
     plt.bar([x[0] for x in d], [x[1] for x in d], log=True)# use log = True to make the graph clearer
+    plt.xticks(range(len([x[1] for x in d])), [x[0] for x in d], rotation=90)
     plt.show()
