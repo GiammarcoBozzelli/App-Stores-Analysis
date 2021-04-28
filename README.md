@@ -7,7 +7,7 @@ ___
 - [x] Which App Category do users prefer? Does it change between different stores?
 - [ ] For which App Category are users willing to pay more?
 - [ ] Does users’ rating depend on price?
-- [ ] Does users’ rating depend on price?
+- [ ] Do ratings, popularity and prices depend on applications' size?
 - [ ] Do most popular apps have some characteristics in common?
 
 ## ⚠️ What to do? ⚠️
