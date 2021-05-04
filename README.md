@@ -18,8 +18,8 @@ ___
 - Remember to comment the lines of code (this will help for the exam)
 
 ## Domande prof:
-- Cambiare nomi categorie a mano o con python?
-- Al FRA: omertà o non omertà? (post aperitivo)
+- Cambiare nomi categorie a mano o con python?  --> python
+- Al FRA: omertà o non omertà? (post aperitivo) --> omertà
 ___
   
 ## Question n. 1
