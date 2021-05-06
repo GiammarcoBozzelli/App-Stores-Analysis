@@ -5,38 +5,20 @@ import numpy as np
 import os.path
 import matplotlib.pyplot as plt
 
-def top_categories (file): #returns the dictionary with categories as keys and medium rate as value
-    try: # open as DataFrame the file depending from the extension
-        frame = pd.read_csv(os.path.join(os.getcwd(), file))
-    except:
-        frame = pd.read_json(os.path.join(os.getcwd(), file))
+def top_categories_weighted(data,store_type = None): #create a dictionaries with category : rating 
+    frame = data.copy()
+    frame['weighted_rating'] = frame['interactions'] * frame['rating'] # multiply the ratign * number of interaction and divide by the total number of interactions
 
+    if store_type is None: #check whether the store type was passed as a variable or not
+        pass
+    else:
+        frame = frame[frame['store'] == store_type] #select only the rows with the store type that was called
 
-    file_name = frame.loc[:, ['name', 'category', 'rating', 'installs']] #selecting the columns we will need
-    file_name.dropna(axis=0, how='any', inplace=True)  # deleting all rows with at least one NaN
-
-    # Replace each ',' in the 'installs' column with '' in order to convert it in float64
-    file_name['installs'] = file_name['installs'].astype(str)
-    file_name['installs'] = file_name['installs'].str.strip('+,. ')
-    file_name['installs'] = np.float64(file_name['installs'].str.replace(',', ''))
-
-    # add a column ['weighted_rating'] that will be useful in dentifying a more precise mean rating per each category
-    file_name.loc[:, 'weighted_rating'] = file_name['rating'] * file_name['installs']
-
-   # %%
-    # Calculating the actual rating for each category
-    categories = set(file_name['category'].tolist())  # getting all category types
-    category_rating_dic = {}  # dict to contain the rating for each category type
+    frame = frame[frame['category'].notnull()]
+    categories = set(frame['category'].tolist())  # getting all category types
+    category_rating_dic = {} # dict to contain the rating for each category type
     for category in categories:  # filling the dictionary
-        cat = file_name.loc[file_name['category'] == category]  # choosing the single category
-        rating = cat['weighted_rating'].sum() / cat['installs'].sum()  # calculating the rating wrt n. of installs
+        cat = frame.loc[frame['category'] == category]  # choosing the single category
+        rating = cat['weighted_rating'].sum() / cat['interactions'].sum() # calculating the mean weighted rating for the category
         category_rating_dic[category] = rating  # adding the new key:value to the dictionary
-    return(category_rating_dic)
-
-def bar_chart (category_rating_dic):
-    # making a bar char with the top 5 categories
-    d = sorted(category_rating_dic.items(), key=lambda xy: xy[1], reverse=True)[:5]
-    print('The top 5 categories are:', d)
-    plt.bar([x[0] for x in d], [x[1] for x in d], log=True)# use log = True to make the graph clearer
-    plt.xticks(range(len([x[1] for x in d])), [x[0] for x in d], rotation=90)
-    plt.show()
+    return (category_rating_dic)
