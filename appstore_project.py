@@ -6,6 +6,8 @@ import numpy as np
 import pandas as pd
 import os.path
 import appstore as app
+import seaborn as sb
+
 
 #%%
 
@@ -29,7 +31,6 @@ playstore.columns = ["name","category","rating","reviews","price","size (MB)","i
 playstore
 
 #%%
-
 #pulire la colonna del prezzo
 import string
 playstore['price'] = playstore['price'].astype(str)
@@ -146,10 +147,9 @@ alldata['reviews'] = alldata['reviews'].fillna(0)
 alldata['interactions'] = alldata['reviews'] + alldata['No of people Rated']
 alldata = alldata.loc[:,['name','price','interactions','category', 'store', 'rating', 'size (MB)']]
 
-alldata = alldata.dropna(thresh=4) #drop rows with 4 or more NaNs 
-#%%
+alldata = alldata.dropna(thresh=4)
 
-#QUESTION N. 1
+#%%
 dict_categories = {'Health & Fitness':['Beauty','Health & Fitness','Medical','Health and Fitness'],
                        'Photos & Videos':['Video Players & Editors','Art & Design','Photography', 'Multimedia Design', 'Photo & Video'],
                        'News':['Weather', 'News & Magazines', 'Sports','News and Weather', 'Weather', 'News'],
@@ -163,6 +163,8 @@ dict_categories = {'Health & Fitness':['Beauty','Health & Fitness','Medical','He
                        'Maps & Navigation' : ['Auto & Vehicles', 'Maps & Navigation', 'Travel', 'Travel & Local', 'Navigation and Maps', 'Navigation'],
                        'Books & Reference' : ['Books & Reference', 'Books', 'Book', 'Reference'],
                        'Education' : ['Education', 'Parenting', 'Kids and Family']}
+
+#QUESTION N. 1
 
 
 for k,v in dict_categories.items():
