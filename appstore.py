@@ -5,7 +5,7 @@ import numpy as np
 import os.path
 import matplotlib.pyplot as plt
 
-def top_categories_weighted(data,store_type = None): #create a dictionaries with category : rating 
+def top_categories_weighted(data,store_type = None):
     frame = data.copy()
     frame['weighted_rating'] = frame['interactions'] * frame['rating'] # multiply the ratign * number of interaction and divide by the total number of interactions
 
@@ -14,7 +14,7 @@ def top_categories_weighted(data,store_type = None): #create a dictionaries with
     else:
         frame = frame[frame['store'] == store_type] #select only the rows with the store type that was called
 
-    frame = frame[frame['category'].notnull()]
+    frame = frame[frame['category'].notnull()] #get only the rows with non- NaN values
     categories = set(frame['category'].tolist())  # getting all category types
     category_rating_dic = {} # dict to contain the rating for each category type
     for category in categories:  # filling the dictionary
@@ -22,3 +22,7 @@ def top_categories_weighted(data,store_type = None): #create a dictionaries with
         rating = cat['weighted_rating'].sum() / cat['interactions'].sum() # calculating the mean weighted rating for the category
         category_rating_dic[category] = rating  # adding the new key:value to the dictionary
     return (category_rating_dic)
+
+'''def bar_chart(category_rating_dic):
+    # making a bar char with the top 5 categories
+'''
