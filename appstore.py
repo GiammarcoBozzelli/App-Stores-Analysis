@@ -14,7 +14,7 @@ def top_categories_weighted(data,store_type = None):
     else:
         frame = frame[frame['store'] == store_type] #select only the rows with the store type that was called
 
-    frame = frame[frame['category'].notnull()] #get only the rows with non- NaN values
+    frame = frame[frame['category'].notnull()] #get only the rows with non- NaN values in the 'category' column
     categories = set(frame['category'].tolist())  # getting all category types
     category_rating_dic = {} # dict to contain the rating for each category type
     for category in categories:  # filling the dictionary
