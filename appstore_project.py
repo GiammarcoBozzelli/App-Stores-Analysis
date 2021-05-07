@@ -45,6 +45,7 @@ playstore['price'] = playstore['price'].str.split(' ').str[-1]
 playstore['price'] = np.float32(playstore['price'])*0.000043
 
 #%%
+
 playstore['size (MB)'] = playstore['size (MB)'].astype(str)
 bad = ['M',',','k']
 for s in bad:
@@ -145,7 +146,7 @@ alldata['reviews'] = alldata['reviews'].fillna(0)
 alldata['interactions'] = alldata['reviews'] + alldata['No of people Rated']
 alldata = alldata.loc[:,['name','price','interactions','category', 'store', 'rating', 'size (MB)']]
 
-
+alldata = alldata.dropna(thresh=4) #drop rows with 4 or more NaNs 
 #%%
 
 #QUESTION N. 1
