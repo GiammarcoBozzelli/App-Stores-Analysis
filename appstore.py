@@ -36,3 +36,15 @@ def clean_column (df, column):
     df[column].isna = 0.0
     return df[column]
 '''
+def grafic_rating(data):
+    categories = data.keys()
+    ratings = data.values()
+    y_pos = np.arange(len(categories))
+
+    plt.barh(y_pos, ratings, align='center', alpha=0.5, log=True)
+    plt.yticks(y_pos, categories)
+    plt.xlabel('rating')
+    plt.ylabel('categories')
+    plt.title('Statistic correlation between rating and category')
+    plt.show()
+    return()
