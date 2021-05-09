@@ -169,7 +169,7 @@ dict_categories = {'Health & Fitness':['Beauty','Health & Fitness','Medical','He
 
 for k,v in dict_categories.items():
     for x in v:
-        alldata['category'] = alldata['category'].str.replace(x,k)
+        alldata['category'].replace(x, k, inplace = True)
 
 alldata
 
