@@ -7,7 +7,7 @@ import pandas as pd
 import os.path
 import appstore as app
 import seaborn as sb
-
+import matplotlib.pyplot as plt
 
 #%%
 
@@ -31,6 +31,7 @@ playstore.columns = ["name","category","rating","reviews","price","size (MB)","i
 playstore
 
 #%%
+
 #pulire la colonna del prezzo
 import string
 playstore['price'] = playstore['price'].astype(str)
@@ -150,6 +151,7 @@ alldata = alldata.loc[:,['name','price','interactions','category', 'store', 'rat
 alldata = alldata.dropna(thresh=4)
 
 #%%
+
 dict_categories = {'Health & Fitness':['Beauty','Health & Fitness','Medical','Health and Fitness'],
                        'Photos & Videos':['Video Players & Editors','Art & Design','Photography', 'Multimedia Design', 'Photo & Video'],
                        'News':['Weather', 'News & Magazines', 'Sports','News and Weather', 'Weather', 'News'],
@@ -188,3 +190,187 @@ print(app.top_categories_weighted(alldata,'appstore'))
 #%%
 
 print(app.top_categories_weighted(alldata,'windows_store'))
+
+#%%
+
+#figure, axis = plt.subplots(3)
+
+#%%
+
+print(app.top_categories_weighted(alldata))
+
+allcateg_dict= app.top_categories_weighted(alldata)
+
+app.grafic_rating(allcateg_dict)
+
+#%%
+
+print(app.top_categories_weighted(alldata,'playstore'))
+
+pscateg_dict=app.top_categories_weighted(alldata,'playstore')
+
+app.grafic_rating(pscateg_dict)
+
+#%%
+
+print(app.top_categories_weighted(alldata,'appstore'))
+
+ascateg_dict=app.top_categories_weighted(alldata,'appstore')
+
+app.grafic_rating(ascateg_dict)
+
+#%%
+
+print(app.top_categories_weighted(alldata,'windows_store'))
+
+wscateg_dict=app.top_categories_weighted(alldata,'windows_store')
+
+app.grafic_rating(wscateg_dict)
+
+#%%
+
+#QUESTION N. 5
+
+frame=alldata.sort_values(by = ['rating', 'interactions'], ascending = False)
+frame.head(10)
+#to select the first 100 popular apps
+top_50=frame.iloc[:50,:]
+
+#%%
+
+#to drop rows with size = 0
+top_50 = top_50.drop(top_50[(top_50['size (MB)'] == 0)].index)
+top_50
+
+#%%
+
+categories = (top_50['category'].tolist())  # getting all category types
+category_rating_dic = {} # dict to contain the rating for each category type
+for category in categories:  # filling the dictionary
+   if category not in category_rating_dic:
+       category_rating_dic[category]=1
+   else:
+       category_rating_dic[category]+=1
+category_rating_dic
+
+#%%
+
+categories = category_rating_dic.keys()
+ratings = category_rating_dic.values()
+y_pos = np.arange(len(categories))
+
+plt.barh(y_pos, ratings, align='center', alpha=0.5)
+plt.yticks(y_pos, categories)
+plt.xlabel('rating')
+plt.ylabel('categories')
+plt.title('which is the most common category in the top 50 apps?')
+plt.show()
+
+#%%
+
+top_50.plot.bar(x="name", y="size (MB)", rot=70, title="Size (MB) in the top 50")
+plt.show(block=True)
+
+#%%
+
+#remove the 5 applications with largest size
+for i in range(7):
+    top_50.drop(top_50['size (MB)'].idxmax(), inplace = True)
+
+#%%
+
+top_50.plot.bar(x="name", y="size (MB)", rot=70, title="Size (MB) in the top 50")
+plt.show(block=True)
+
+#%%
+
+#trovare mean e standard deviation del grafico
+print('Mean = ',top_50['size (MB)'].mean())
+print('Standard Deviation = ',top_50['size (MB)'].std())
+#conviene fare un applicazione di max 78 + 48 MB
+
+#%%
+
+#PRICE - Free
+price_top = frame.iloc[:50,:]
+prices = (price_top['price'].tolist())  # getting all category types
+price_dic = {} # dict to contain the rating for each category type
+for price in prices:  # filling the dictionary
+   if price not in price_dic:
+       price_dic[price]=1
+   else:
+       price_dic[price]+=1
+price_dic
+
+#%%
+
+categories = price_dic.keys()
+ratings = price_dic.values()
+y_pos = np.arange(len(categories))
+
+plt.barh(y_pos, ratings, align='center', alpha=0.5)
+plt.yticks(y_pos, categories)
+plt.xlabel('rating')
+plt.ylabel('categories')
+plt.title('which is the most common category in the top 50 apps?')
+plt.show()
+
+#%%
+
+#Price - Big money
+price_top = frame.iloc[:100,:]
+price_top = price_top.drop(price_top[(price_top['price'] == 0.0)].index)
+prices = (price_top['price'].tolist())  # getting all category types
+price_dic = {} # dict to contain the rating for each category type
+for price in prices:  # filling the dictionary
+   if price not in price_dic:
+       price_dic[price]=1
+   else:
+       price_dic[price]+=1
+price_dic
+
+#%%
+
+categories = price_dic.keys()
+ratings = price_dic.values()
+y_pos = np.arange(len(categories))
+
+plt.barh(y_pos, ratings, align='center', alpha=0.5)
+plt.yticks(y_pos, categories)
+plt.xlabel('rating')
+plt.ylabel('categories')
+plt.title('which is the most common category in the top 50 apps?')
+plt.show()
+
+#%%
+
+'''#Price - Big money
+price_top = frame.iloc[:500,:] #aumento numero app per vedere che prezzo conviene siccome 1$ e 4.99 uguali
+price_top = price_top.drop(price_top[(price_top['price'] == 0.0)].index)
+prices = (price_top['price'].tolist())  # getting all category types
+price_dic = {} # dict to contain the rating for each category type
+for price in prices:  # filling the dictionary
+   if price not in price_dic:
+       price_dic[price]=1
+   else:
+       price_dic[price]+=1
+price_dic
+'''
+
+#%%
+
+#STORE
+#Price - Big money
+store_top = frame.iloc[:50,:]
+prices = (store_top['store'].tolist())  # getting all category types
+price_dic = {} # dict to contain the rating for each category type
+for price in prices:  # filling the dictionary
+   if price not in price_dic:
+       price_dic[price]=1
+   else:
+       price_dic[price]+=1
+price_dic
+
+#%%
+
+#Grafico??
