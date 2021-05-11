@@ -48,3 +48,13 @@ def grafic_rating(data):
     plt.title('Statistic correlation between rating and category')
     plt.show()
     return()
+
+def dictionary_top(frame, column):
+    list = (frame[column].tolist())  # getting all category types
+    dic = {}  # dict to contain the rating for each category type
+    for e in list:  # filling the dictionary
+        if e not in dic:
+            dic[e] = 1
+        else:
+            dic[e] += 1
+    return (dic)
