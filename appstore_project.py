@@ -227,14 +227,126 @@ wscateg_dict=app.top_categories_weighted(alldata,'windows_store')
 
 app.grafic_rating(wscateg_dict)
 
+#%% md
+
+<h2>Research Question 2</h2>
+<p>For which App Category are users willing to pay more?<br>
+
+1) For each app with same category we compute the price mean<p>
+2) Then we represent it graphically <p>
+
+#%%
+
+#Creating a copy to work safely
+df = alldata.copy()
+
+#Selecting the essential columns for our research question
+df = df[['category', 'price']]
+df
+
+#%% md
+
+- It appears that there are some app with Nan values in the interested columns: price, categories
+- They both will be removed, in order to procced with the research question
+
+#%%
+
+#Checking how many Nan values per columns
+df.isnull().sum()
+
+#%%
+
+#dropping the Nan values of the price and category columns
+df.dropna(subset=['price','category'], inplace=True)
+
+#%%
+
+#checking the results
+df.isnull().sum()
+
+#%% md
+
+We can now work on the research question:<p>
+- For each category a mean will be computed
+- The mean will be displayed and sorted in a new dataframe
+
+#%%
+
+#Finding all the categories and storing them in a list
+price_mean_dict= {}
+
+categories = (df['category'].tolist())  # getting all category types
+category_list = [] # dict to contain all the categories
+for category in categories:  # filling the dictionary
+   if category not in category_list:
+       category_list.append(category)
+   else:
+       continue
+category_list
+
+
+#%%
+
+#Use the previous list to create a dictionary with the price mean of each category
+for x in category_list:
+    a = df[df['category']==x]
+    price_mean_dict[x]=a['price'].mean(axis=0)
+
+price_mean_dict
+
+
+#%%
+
+#Visualising the dictionary in a series
+
+df_mean_price = pd.Series(price_mean_dict).rename_axis('category').reset_index(name='mean price')
+df_mean_price
+
+#%%
+
+#sorting values in ascending order
+df_mean_price.sort_values(by=['mean price'], inplace=True)
+df_mean_price
+
+#%% md
+
+As we can clearly see from the data, the categories: Education and Tool & Utilities are the ones with highest prices.
+
+#%% md
+
+<h4>Graphical representation </h4>
+
+- We are now going to display the results trough a bar chart
+
+
+#%%
+
+df_mean_price.plot.barh(x='category', y='mean price', rot=0, color=['orange','blue'])
+
+#%%
+
+#Computing summary statistic
+df_mean_price.describe()
+
+#%% md
+
+<h4> Conclusion <h4>
+
+#%% md
+
+The catgories below categories are the most expensive among all the stores
+- Education
+- tools & Utilities
+- Health & Fitness
+
 #%%
 
 #QUESTION N. 5
 
-frame=alldata.sort_values(by = ['rating', 'interactions'], ascending = False)
+frame = alldata.sort_values(by = ['rating', 'interactions'], ascending = False)
 frame.head(10)
-#to select the first 100 popular apps
-top_50=frame.iloc[:50,:]
+#to select the first 50 popular apps
+top_50 = frame.iloc[:50,:]
 
 #%%
 
@@ -244,13 +356,7 @@ top_50
 
 #%%
 
-categories = (top_50['category'].tolist())  # getting all category types
-category_rating_dic = {} # dict to contain the rating for each category type
-for category in categories:  # filling the dictionary
-   if category not in category_rating_dic:
-       category_rating_dic[category]=1
-   else:
-       category_rating_dic[category]+=1
+category_rating_dic = app.dictionary_top(top_50,'category')
 category_rating_dic
 
 #%%
@@ -258,7 +364,6 @@ category_rating_dic
 categories = category_rating_dic.keys()
 ratings = category_rating_dic.values()
 y_pos = np.arange(len(categories))
-
 plt.barh(y_pos, ratings, align='center', alpha=0.5)
 plt.yticks(y_pos, categories)
 plt.xlabel('rating')
@@ -268,8 +373,8 @@ plt.show()
 
 #%%
 
-top_50.plot.bar(x="name", y="size (MB)", rot=70, title="Size (MB) in the top 50")
-plt.show(block=True)
+top_50.plot.bar(x="name", y="size (MB)", rot=70, title="Size (MB) in the top 50", figsize = (15,8))
+plt.show()
 
 #%%
 
@@ -285,21 +390,16 @@ plt.show(block=True)
 #%%
 
 #trovare mean e standard deviation del grafico
-print('Mean = ',top_50['size (MB)'].mean())
-print('Standard Deviation = ',top_50['size (MB)'].std())
+print('Mean =',top_50['size (MB)'].mean())
+print('Standard Deviation =',top_50['size (MB)'].std())
 #conviene fare un applicazione di max 78 + 48 MB
 
 #%%
 
 #PRICE - Free
 price_top = frame.iloc[:50,:]
+price_dic = app.dictionary_top(price_top,'price')
 prices = (price_top['price'].tolist())  # getting all category types
-price_dic = {} # dict to contain the rating for each category type
-for price in prices:  # filling the dictionary
-   if price not in price_dic:
-       price_dic[price]=1
-   else:
-       price_dic[price]+=1
 price_dic
 
 #%%
@@ -320,13 +420,7 @@ plt.show()
 #Price - Big money
 price_top = frame.iloc[:100,:]
 price_top = price_top.drop(price_top[(price_top['price'] == 0.0)].index)
-prices = (price_top['price'].tolist())  # getting all category types
-price_dic = {} # dict to contain the rating for each category type
-for price in prices:  # filling the dictionary
-   if price not in price_dic:
-       price_dic[price]=1
-   else:
-       price_dic[price]+=1
+price_dic = app.dictionary_top(price_top,'price')
 price_dic
 
 #%%
@@ -362,15 +456,20 @@ price_dic
 #STORE
 #Price - Big money
 store_top = frame.iloc[:50,:]
-prices = (store_top['store'].tolist())  # getting all category types
-price_dic = {} # dict to contain the rating for each category type
-for price in prices:  # filling the dictionary
-   if price not in price_dic:
-       price_dic[price]=1
-   else:
-       price_dic[price]+=1
-price_dic
+store_dic = app.dictionary_top(store_top,'store')
+store_dic
 
 #%%
 
-#Grafico??
+#plot a pie chart
+plt.pie(list(store_dic.values()),labels = list(store_dic.keys()), explode = (0.2,0))
+
+#%%
+
+#let's now put together all the most common characteristics to find apps that ahve them all
+top_50 = top_50[top_50['category'] == 'Games']
+top_50 = top_50.loc[(top_50['size (MB)'] >= 29) & (top_50['size (MB)'] <= 127)]
+top_50 = top_50.loc[top_50['price'] == 0]
+top_50 = top_50.loc[top_50['store'] == 'appstore']
+
+top_50
