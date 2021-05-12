@@ -9,7 +9,7 @@ def top_categories_weighted(data,store_type = None):
     frame = data.copy()
     frame['interactions'].dropna(inplace = True)#remove all rows in 'interaction' and 'rating' column with NaN values
     frame['rating'].dropna(inplace = True)
-    frame['weighted_rating'] = frame['interactions'] * frame['rating'] # multiply the rating * number of interaction and divide by the total number of interactions
+    frame['weighted_rating'] = frame['interactions'] * frame['rating'] # multiply the rating * number of interaction
 
     if store_type is None: #check whether the store type was passed as a variable or not
         pass
@@ -17,31 +17,43 @@ def top_categories_weighted(data,store_type = None):
         frame = frame[frame['store'] == store_type] #select only the rows with the store type that was called
 
     frame = frame[frame['category'].notnull()] #get only the rows with non- NaN values
-    categories = set(frame['category'].tolist())  # getting all category types
+    categories = set(frame['category'].tolist())  # getting all category types without repetitions
     category_rating_dic = {} # dict to contain the rating for each category type
+
     for category in categories:  # filling the dictionary
-        cat = frame.loc[frame['category'] == category]  # choosing the single category
-        rating = cat['weighted_rating'].sum() / cat['interactions'].sum() # calculating the mean weighted rating for the category
+        cat = frame.loc[frame['category'] == category]  # creating a frame by choosing the single category
+        rating = cat['weighted_rating'].sum() / cat['interactions'].sum() #calculating the weighted rating for the category
         category_rating_dic[category] = rating  # adding the new key:value to the dictionary
+
     return (category_rating_dic)
 
-'''def bar_chart(category_rating_dic):
-    # making a bar char with the top 5 categories
-'''
+def pie_chart(data,store_type = None):
+    frame = data.copy()
+    if store_type is None: #check whether the store type was passed as a variable or not
+        pass
+    else:
+        frame = frame[frame['store'] == store_type] #select only the rows with the store type that was called
 
-'''import re
+    frame = frame[frame['category'].notnull()] #get only the rows with non- NaN values
+    categories = frame['category'].tolist()# getting a list with categories
+    category_dic = {} # dict to contain the rating for each category type
+    for category in categories:  # filling the dictionary
+        if category not in category_dic:
+            category_dic[category] = 1
+        else:
+            category_dic[category] += 1# adding the new key:value to the dictionary
 
-def clean_column (df, column):
-    df[column] = df[column].str.replace(r'\D', '')
-    df[column].isna = 0.0
-    return df[column]
-'''
-def grafic_rating(data):
-    categories = data.keys()
-    ratings = data.values()
+    plt.figure(figsize = (10,10))
+    plt.pie(list(category_dic.values()), labels=list(category_dic.keys()),autopct='%1.1f%%', explode = (0.1,0,0,0,0,0,0,0,0,0,0,0,0))
+
+    return (category_dic)
+
+def grafic_rating(dict):
+    categories = dict.keys()
+    ratings = dict.values()
     y_pos = np.arange(len(categories))
 
-    plt.barh(y_pos, ratings, align='center', alpha=0.5, log=True)
+    plt.barh(y_pos, ratings, align='center', alpha=0.5, log=True) #add log = True to make the graph clearer
     plt.yticks(y_pos, categories)
     plt.xlabel('rating')
     plt.ylabel('categories')
