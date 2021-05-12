@@ -1,37 +1,60 @@
+#%% md
+# Group 1
+# Are different Appstores so different?
+<ul><b>
+<li> Bozzelli Giammarco</li>
+<li>Cavalieri Marco</li>
+<li>Lupi Isaac</li>
+<li>Parigi Michele</li>
+<li>Sibilia Beatrice</li>
+</ul><b>
+#%% md
+
+## Link to the Google Drive folder containing the datasets
+
+[group-1-project](www.link.com)
+
+#%% md
+
+## Data Loading and Cleaning
+
+
+#%% md
+ Before starting we import all the modules we will need troughout the project
 #%%
 
-import csv
-import json
+import os.path
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import os.path
-import appstore as app
 import seaborn as sns
-import matplotlib.pyplot as plt
+import appstore as app #import as app the module we created to store functions in
 
+#%% md
+
+We decided to <b> load </b> and <b> clean </b> one dataset at the time starting from the file <i> 'playstore.csv' </i>
+### Playstore.csv
+#%% md
+First fo all we need to make sure that the file path is always correct no matter the operating system to do this we decided to use the 'os.getcwd()' function, and also we print the list of the files in the folder path
 #%%
-
-#DATA LOADING - CLEANING
 data_folder = os.getcwd() #get the current working directory that we will use as path
 file_dir_names = os.listdir(data_folder) #list of all files in the directory
 print(data_folder,'\n', file_dir_names)
 
+#%% md
+Then we import the dataset from <i> 'playstore.csv' </i> directly as a DataFrame using the Pandas' funciton <i> '.read_csv' </i>
 #%%
-
-#PLAYSTORE
-#Importare il dataframe
-playstore = pd.read_csv(os.path.join(data_folder,'playstore.csv'))# open playstore.csv
-
+playstore = pd.read_csv(os.path.join(data_folder,'playstore.csv'))# open playstore.csv as a Pandas DataFrame
+playstore
+#%% md
+Now we keep only the columns we will need to use and we rename them
 #%%
-
-#pulire le colonne
 playstore = playstore.loc[:,["app_name","genre","rating","reviews","cost_label","size","installs"]] #get only the columns we need
-
 playstore.columns = ["name","category","rating","reviews","price","size (MB)","installs"] #renaming all columns
 
+#%% md
+Time to start cleaning the <b>playstore</b> DataFrame!
 #%%
-
-#clean the 'price' column
 playstore['price'] = playstore['price'].astype(str) #convert all cells in the columns into strings
 
 bad = [",","₫"," Buy"] #list of all things to remove
@@ -41,7 +64,7 @@ for s in bad:
 playstore['price'] = playstore['price'].str.replace('Install', '0')
 playstore['price'] = playstore['price'].str.split(' ').str[-1] #was 200 now is 7
 
-#convert the 'price' column to float32 and from vietnamese dong to USD
+#convert the 'price' column to np.float32 and from vietnamese dong to USD
 playstore['price'] = np.float32(playstore['price'])*0.000043
 
 #%%
@@ -53,56 +76,56 @@ for s in bad:
 
 playstore['size (MB)'] = playstore['size (MB)'].str.replace('Varies with device','0')
 playstore['size (MB)']= playstore['size (MB)'].fillna(0)
-
+playstore['size (MB)'] = np.float64(playstore['size (MB)'])
+#%%
 playstore['installs'] = playstore['installs'].str.strip('+')
 playstore['installs'] = playstore['installs'].str.replace(',', '')
+#%%
 playstore['reviews'] = playstore['reviews'].str.replace(' total', '')
 playstore['reviews'] = playstore['reviews'].str.replace(',', '')
-
-#%%
-
-playstore['size (MB)'] = np.float64(playstore['size (MB)'])
-playstore["store"] = "playstore" #add a column to specify the store
-
-#%%
-
 playstore['reviews']=np.float64(playstore['reviews'])
+#%% md
+The last thing we need to do now is add a column <i><b> 'store' </b></i> that specifies to store, this well be useful when we will merge together all datasets
+#%%
+playstore["store"] = "playstore" #add a column to specify the store
 playstore
 
+#%% md
+## Msft.csv -> microsoft store
+As we did before we import the dataset as a DataFrame using the Pandas' funciton '.read_csv'
 #%%
-
-#WINDOWS
-#Import the dataset
-windows_store = pd.read_csv(os.path.join(data_folder,'msft.csv'))
-
+microsoft_store = pd.read_csv(os.path.join(data_folder, 'msft.csv'))
+microsoft_store
+#%% md
+We then procede selecting only the columns we need and renaming them.
+This time we replace
 #%%
-
 #clean columns
-windows_store = windows_store.loc[:,["Name","Rating","No of people Rated","Category","Price"]] #get only the columns we nee
-windows_store.columns = ["name","rating","No of people Rated","category","price"]#renaming the columns
-windows_store['size (MB)'] = 0.0 #add 0 because we do not want nan in this colums when we merge all datasets
+microsoft_store = microsoft_store.loc[:, ["Name", "Rating", "No of people Rated", "Category", "Price"]] #get only the columns we nee
+microsoft_store.columns = ["name", "rating", "No of people Rated", "category", "price"]#renaming the columns
+microsoft_store['size (MB)'] = 0.0 #add 0 because we do not want nan in this columns when we merge all datasets
 
 #%%
 
 #clean the 'price' column
-windows_store['price'] = windows_store['price'].str.replace('Free', '0')
-windows_store['price'] = windows_store['price'].str.replace('₹ ', '')
+microsoft_store['price'] = microsoft_store['price'].str.replace('Free', '0')
+microsoft_store['price'] = microsoft_store['price'].str.replace('₹ ', '')
 
-windows_store['price'] = windows_store['price'].astype(str)
-windows_store['price'] = windows_store['price'].str.strip('+, ')#remove leading and trailing single characters
+microsoft_store['price'] = microsoft_store['price'].astype(str)
+microsoft_store['price'] = microsoft_store['price'].str.strip('+, ')#remove leading and trailing single characters
 
 #convert the 'price' column to float64 and from Indian rupee to USD
-windows_store['price'] = np.float64(windows_store['price'].str.replace(',', ''))*0.013
+microsoft_store['price'] = np.float64(microsoft_store['price'].str.replace(',', '')) * 0.013
 
 #%%
 
 #add the 'store' column
-windows_store["store"] = "windows_store"
+microsoft_store["store"] = "microsoft_store"
 
 #%%
 
-windows_store['No of people Rated']=np.float64(windows_store['No of people Rated'])
-windows_store
+microsoft_store['No of people Rated']=np.float64(microsoft_store['No of people Rated'])
+microsoft_store
 
 #%%
 
@@ -128,7 +151,7 @@ appstore
 #%%
 
 #Merge Dataframes
-alldata = pd.concat([playstore,appstore,windows_store])
+alldata = pd.concat([playstore, appstore, microsoft_store])
 alldata
 
 #%%
@@ -216,11 +239,11 @@ app.grafic_rating(ascateg_dict)
 
 #%%
 
-print(app.top_categories_weighted(alldata,'windows_store'))
+print(app.top_categories_weighted(alldata,'microsoft_store'))
 
-wscateg_dict=app.top_categories_weighted(alldata,'windows_store')
+mccateg_dict=app.top_categories_weighted(alldata,'microsoft_store')
 
-app.grafic_rating(wscateg_dict)
+app.grafic_rating(mccateg_dict)
 
 #%% md
 
@@ -523,4 +546,3 @@ top_50 = top_50.loc[top_50['store'] == 'appstore']
 top_50
 
 #%%
-
