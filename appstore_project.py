@@ -230,21 +230,6 @@ pie = app.pie_chart(alldata)
 ### Which App Category do users prefer?
 **<i>(Giammarco Bozzelli</i> and <i>Marco Cavaliere)**</i>
 
-#%%
-
-print(app.top_categories_weighted(alldata))
-
-#%%
-
-print(app.top_categories_weighted(alldata,'playstore'))
-
-#%%
-
-print(app.top_categories_weighted(alldata,'appstore'))
-
-#%%
-
-print(app.top_categories_weighted(alldata,'microsoft_store'))
 
 #%%
 
@@ -710,3 +695,4 @@ top_50
 
 #%%
 
+frie
