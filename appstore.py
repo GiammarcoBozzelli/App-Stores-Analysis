@@ -43,8 +43,8 @@ def pie_chart(data,store_type = None):
         else:
             category_dic[category] += 1# adding the new key:value to the dictionary
 
-    plt.figure(figsize = (10,10))
-    plt.pie(list(category_dic.values()), labels=list(category_dic.keys()),autopct='%1.1f%%', explode = (0.1,0,0,0,0,0,0,0,0,0,0,0,0))
+    plt.figure(figsize = (8,8))
+    plt.pie(list(category_dic.values()), labels=list(category_dic.keys()),rotatelabels = 30 ,autopct='%1.1f%%', explode = (0.1,0,0,0,0,0,0,0,0,0,0,0,0))
 
     return (category_dic)
 
@@ -63,7 +63,7 @@ def grafic_rating(dict):
 
 def dictionary_top(frame, column):
     list = (frame[column].tolist())  # getting all category types
-    dic = {}  # dict to contain the rating for each category type
+    dic = {}  # dict to contain the number of apps for each category type
     for e in list:  # filling the dictionary
         if e not in dic:
             dic[e] = 1
