@@ -4,7 +4,7 @@
 # Are different Appstores so different?
 <ul><b>
 <li> Bozzelli Giammarco</li>
-<li>Cavalieri Marco</li>
+<li>Cavaliere Marco</li>
 <li>Lupi Isaac</li>
 <li>Parigi Michele</li>
 <li>Sibilia Beatrice</li>
