@@ -5,7 +5,7 @@ import numpy as np
 import os.path
 import matplotlib.pyplot as plt
 
-def top_categories_weighted(data,store_type = None):
+def top_categories_weighted(data,store_type = None): #Giammarco
     frame = data.copy()
     frame['interactions'].dropna(inplace = True)#remove all rows in 'interaction' and 'rating' column with NaN values
     frame['rating'].dropna(inplace = True)
@@ -25,9 +25,10 @@ def top_categories_weighted(data,store_type = None):
         rating = cat['weighted_rating'].sum() / cat['interactions'].sum() #calculating the weighted rating for the category
         category_rating_dic[category] = rating  # adding the new key:value to the dictionary
 
+    print ('The highest rated category is: ',max(category_rating_dic, key=lambda k: category_rating_dic[k]))
     return (category_rating_dic)
 
-def pie_chart(data,store_type = None):
+def pie_chart(data,store_type = None): #Giammarco
     frame = data.copy()
     if store_type is None: #check whether the store type was passed as a variable or not
         pass
@@ -48,20 +49,21 @@ def pie_chart(data,store_type = None):
 
     return (category_dic)
 
-def grafic_rating(dict):
+def grafic_rating(dict): #Marco
     categories = dict.keys()
     ratings = dict.values()
     y_pos = np.arange(len(categories))
 
-    plt.barh(y_pos, ratings, align='center', alpha=0.5, log=True) #add log = True to make the graph clearer
+    plt.figure(figsize = (8,6))
+    plt.barh(y_pos, ratings, align='center', alpha=0.5, log=True, ) #add log = True to make the graph clearer
     plt.yticks(y_pos, categories)
-    plt.xlabel('rating')
-    plt.ylabel('categories')
-    plt.title('Statistic correlation between rating and category')
+    plt.xlabel('Rating', fontsize = 12)
+    plt.ylabel('Categories', fontsize = 12)
+    plt.title('Statistic correlation between rating and category', fontsize = 15)
     plt.show()
-    return()
+    return
 
-def dictionary_top(frame, column):
+def dictionary_top(frame, column): #Marco
     list = (frame[column].tolist())  # getting all category types
     dic = {}  # dict to contain the number of apps for each category type
     for e in list:  # filling the dictionary
