@@ -596,30 +596,33 @@ top_50.head(10)
 #%%
 
 category_dic = app.dictionary_top(top_50,'category')
-category_dic
+
+def top_50_catplot(dic):
+    categories = dic.keys()
+    ratings = dic.values()
+    y_pos = np.arange(len(categories))
+    plt.figure(figsize=(9, 6))
+    plt.barh(y_pos, ratings, align='center', alpha=0.5)
+    plt.yticks(y_pos, categories)
+    plt.xlabel('Number of Apps', fontsize=12)
+    plt.ylabel('Categories', fontsize=12)
+    plt.title('Which is the most common category in the top 50 apps?', fontsize=15)
+    plt.show()
+    return
+#%%
+top_50_catplot(category_dic)
 
 #%%
-
-categories = category_dic.keys()
-ratings = category_dic.values()
-y_pos = np.arange(len(categories))
-plt.figure(figsize = (9,6))
-plt.barh(y_pos, ratings, align='center', alpha=0.5)
-plt.yticks(y_pos, categories)
-plt.xlabel('Number of Apps',  fontsize = 12)
-plt.ylabel('Categories', fontsize = 12)
-plt.title('Which is the most common category in the top 50 apps?', fontsize = 15)
-plt.show()
-
+def top_50_sizeplot(data):
+    data.plot.bar(x="name", y="size (MB)", figsize = (15,8))
+    plt.title("Size (MB) in the top 50", fontsize = 18)
+    plt.xticks([]) # Disable xticks.
+    plt.xlabel('Applications', fontsize = 15)
+    plt.ylabel('Size in MB', fontsize = 15)
+    plt.show()
+    return
 #%%
-
-top_50.plot.bar(x="name", y="size (MB)", figsize = (15,8))
-plt.title("Size (MB) in the top 50", fontsize = 18)
-plt.xticks([]) # Disable xticks.
-plt.xlabel('Applications', fontsize = 15)
-plt.ylabel('Size in MB', fontsize = 15)
-plt.show()
-
+top_50_sizeplot(top_50)
 #%%
 
 #remove the 5 applications with largest size
@@ -627,14 +630,7 @@ for i in range(7):
     top_50.drop(top_50['size (MB)'].idxmax(), inplace = True)
 
 #%%
-
-top_50.plot.bar(x="name", y="size (MB)", figsize = (15,8))
-plt.title("Size (MB) in the top 50", fontsize = 18)
-plt.xticks([]) # Disable xticks.
-plt.xlabel('Applications', fontsize = 15)
-plt.ylabel('Size in MB', fontsize = 15)
-plt.show()
-
+top_50_sizeplot(top_50)
 #%%
 
 #trovare mean e standard deviation del grafico
@@ -651,18 +647,20 @@ prices = (price_top['price'].tolist())  # getting all category types
 price_dic
 
 #%%
-
-price = price_dic.keys()
-freq = price_dic.values()
-y_pos = np.arange(len(price))
-plt.figure(figsize = (9,6))
-plt.barh(y_pos, freq, align='center', alpha=0.5)
-plt.yticks(y_pos, price)
-plt.xlabel('Frequency', fontsize = 12)
-plt.ylabel('Prices', fontsize = 12)
-plt.title('which is the most common category in the top 50 apps?', fontsize = 15)
-plt.show()
-
+def top_50_priceplot(dic):
+    price = price_dic.keys()
+    freq = price_dic.values()
+    y_pos = np.arange(len(price))
+    plt.figure(figsize = (9,6))
+    plt.barh(y_pos, freq, align='center', alpha=0.5)
+    plt.yticks(y_pos, price)
+    plt.xlabel('Frequency', fontsize = 12)
+    plt.ylabel('Prices', fontsize = 12)
+    plt.title('which is the most common category in the top 50 apps?', fontsize = 15)
+    plt.show()
+    return
+#%%
+top_50_priceplot(price_dic)
 #%%
 
 #Price - Big money
@@ -672,18 +670,7 @@ price_dic = app.dictionary_top(price_top,'price')
 price_dic
 
 #%%
-
-price = price_dic.keys()
-freq = price_dic.values()
-y_pos = np.arange(len(price))
-plt.figure(figsize = (9,6))
-plt.barh(y_pos, freq, align='center', alpha=0.5)
-plt.yticks(y_pos, price)
-plt.xlabel('Frequency', fontsize = 12)
-plt.ylabel('Prices', fontsize = 12)
-plt.title('which is the most common category in the top 50 apps?', fontsize = 15)
-plt.show()
-
+top_50_priceplot(price_dic)
 
 #%%
 
@@ -709,5 +696,40 @@ top_50 = top_50.loc[top_50['store'] == 'playstore']
 
 top_50
 
+#%% md
+Observing this table we see that interactions are not that high...
+We know try to sort apps first by 'interaction'
 #%%
-
+alldata.sort_values(by = ['interactions','rating'], ascending = False, inplace = True)
+a = alldata.drop(alldata[(alldata['size (MB)'] == 0)].index)#to select the first 50 popular apps
+top_interactions = a.iloc[:50,:]
+top_interactions.head(10)
+#%% md
+As we can see now the top applications have changed.
+#%%
+category_dic = app.dictionary_top(top_interactions,'category')
+top_50_catplot(category_dic)
+#%%
+top_50_sizeplot(top_interactions)
+#%%
+print('Mean =',top_interactions['size (MB)'].mean())
+print('Standard Deviation =',top_interactions['size (MB)'].std())
+#%%
+price_top = a.iloc[:50,:]
+price_dic = app.dictionary_top(price_top,'price')
+prices = (price_top['price'].tolist())  # getting all prices
+price_dic
+#%% md
+As we can see now there is only one price for the apps in the top 50. This is something they have in common.
+#%%
+#Which Appstore is more frequent in the top 50
+store_top = a.iloc[:50,:]
+store_dic = app.dictionary_top(store_top,'store')
+store_dic
+#%% md
+All Applications also come from the same store: **Playstore**
+#%%
+#let's now put together all the most common characteristics to find apps that them them all
+top_interactions = top_interactions[top_interactions['category'] == 'Games']
+top_interactions = top_interactions.loc[(top_interactions['size (MB)'] >= 20.463256986) & (top_interactions['size (MB)'] <= 105.72074301)]
+top_interactions
