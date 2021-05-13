@@ -15,9 +15,11 @@
 ## Link to the Google Drive folder containing the datasets
 
 __[group-1-project](https://drive.google.com/drive/folders/1WpJfuIUlIh2z5hbM_b9GL8sOLfwKgE_n?usp=sharing)__
+
 #%% md
 
 ## Data Loading and Cleaning
+**<i>(Beatrice Sibilia, Giammarco Bozzelli</i> and <i> Marco Cavaliere)**</i>
 
 Before starting we import all the modules we will need troughout the project
 
@@ -37,7 +39,7 @@ We decided to <b> load </b> and <b> clean </b> one dataset at the time starting 
 
 #%% md
 
-First fo all we need to make sure that the file path is always correct no matter the operating system to do this we decided to use the 'os.getcwd()' function, and also we print the list of the files in the folder path
+First fo all we need to make sure that the file path is always correct no matter the operating system, to do this we decided to use the 'os.getcwd()' function, and also we print the list of the files in the folder path
 
 #%%
 
@@ -47,7 +49,7 @@ print(data_folder,'\n', file_dir_names)
 
 #%% md
 
-Then we import the dataset from <i> 'playstore.csv' </i> directly as a DataFrame using the Pandas' funciton <i> '.read_csv' </i>
+Then we import the dataset from <i> 'playstore.csv' </i> directly as a DataFrame using the Pandas' function <i> '.read_csv' </i>
 
 #%%
 
@@ -56,7 +58,7 @@ playstore
 
 #%% md
 
-Now we keep only the columns we will need to use and we rename them
+Now we keep only the columns we will need to use and rename them
 
 #%%
 
@@ -67,9 +69,13 @@ playstore.columns = ["name","category","rating","reviews","price","size (MB)","i
 
 Time to start cleaning the <b>playstore</b> DataFrame!
 
-#%%
+First thing first we remove from the **_'price'_** column all unnecessary characters by replacing them with an empty string. We noted that in the
+dataframe free applications were marked with the label _'Install'_ so we replaced it with _zero (0)_ , also some
+apps had an historical report of price changes ( _Was X now is Y_ ) so what we did was change this string into a list
+(_split(' ')_) to then select the last item _str[-1]_. Lastly we convert the column from _str_ to _numpy.float32_ type and
+convert the price from Vietnamese Dong to USD
 
-playstore['price'] = playstore['price'].astype(str) #convert all cells in the columns into strings
+#%%
 
 bad = [",","₫"," Buy"] #list of all things to remove
 for s in bad:
@@ -77,38 +83,37 @@ for s in bad:
 
 playstore['price'] = playstore['price'].str.replace('Install', '0')
 playstore['price'] = playstore['price'].str.split(' ').str[-1] #was 200 now is 7
-
-#convert the 'price' column to np.float32 and from vietnamese dong to USD
 playstore['price'] = np.float32(playstore['price'])*0.000043
-
+#%% md
+We go on cleaning the **_'size'_** column by removing unwanted characters, replacing NaN values with 0
+(that we will later on remove) and converting the column into _numpy.float32_
 #%%
-
-playstore['size (MB)'] = playstore['size (MB)'].astype(str)
 bad = ['M',',','k']
 for s in bad:
     playstore["size (MB)"] = playstore["size (MB)"].str.replace(s,"")
 
 playstore['size (MB)'] = playstore['size (MB)'].str.replace('Varies with device','0')
 playstore['size (MB)']= playstore['size (MB)'].fillna(0)
-playstore['size (MB)'] = np.float64(playstore['size (MB)'])
+playstore['size (MB)'] = np.float32(playstore['size (MB)'])
 
+#%% md
+Now is time to clean the **_'installs'_** and the **_'reviews'_** columns
 #%%
 
 playstore['installs'] = playstore['installs'].str.strip('+')
 playstore['installs'] = playstore['installs'].str.replace(',', '')
-
+playstore['installs'] = np.float32(playstore['installs'])
 #%%
 
 playstore['reviews'] = playstore['reviews'].str.replace(' total', '')
 playstore['reviews'] = playstore['reviews'].str.replace(',', '')
-playstore['reviews']=np.float64(playstore['reviews'])
+playstore['reviews']=np.float32(playstore['reviews'])
 
 #%% md
 
-The last thing we need to do now is add a column <i><b> 'store' </b></i> that specifies to store, this well be useful when we will merge together all datasets
+The last thing we need to do now is add a column **_'store' _** that specifies to store, this well be useful when we will merge all datasets together
 
 #%%
-
 playstore["store"] = "playstore" #add a column to specify the store
 playstore
 
@@ -140,11 +145,11 @@ microsoft_store['size (MB)'] = 0.0 #add 0 because we do not want nan in this col
 microsoft_store['price'] = microsoft_store['price'].str.replace('Free', '0')
 microsoft_store['price'] = microsoft_store['price'].str.replace('₹ ', '')
 
-microsoft_store['price'] = microsoft_store['price'].astype(str)
+#microsoft_store['price'] = microsoft_store['price'].astype(str)
 microsoft_store['price'] = microsoft_store['price'].str.strip('+, ')#remove leading and trailing single characters
 
 #convert the 'price' column to float64 and from Indian rupee to USD
-microsoft_store['price'] = np.float64(microsoft_store['price'].str.replace(',', '')) * 0.013
+microsoft_store['price'] = np.float32(microsoft_store['price'].str.replace(',', '')) * 0.013
 
 #%%
 
@@ -153,7 +158,7 @@ microsoft_store["store"] = "microsoft_store"
 
 #%%
 
-microsoft_store['No of people Rated']=np.float64(microsoft_store['No of people Rated'])
+microsoft_store['No of people Rated']=np.float32(microsoft_store['No of people Rated'])
 microsoft_store
 
 #%%
@@ -216,12 +221,15 @@ for k,v in dict_categories.items():
         alldata['category'].replace(x, k, inplace = True) #replace sub categories with the categories we want
 
 #%%
+
 pie = app.pie_chart(alldata)
 
 #%% md
 
 ## Question N.1
 ### Which App Category do users prefer?
+**<i>(Giammarco Bozzelli</i> and <i>Marco Cavaliere)**</i>
+
 #%%
 
 print(app.top_categories_weighted(alldata))
@@ -278,7 +286,7 @@ app.grafic_rating(mccateg_dict)
 
 ## Question N.2
 ### For which App Category are users willing to pay more?
-
+<i>**(Isaac Lupi)**</i>
 1. For each app with same category we compute the price mean<p>
 1. Then we compute the mean of interactions per category <p>
 1. Then we find a relation between the two and sort it in a new dataframe <p>
@@ -384,6 +392,7 @@ merged_frame
 #Sorting values by mean revenues per app
 merged_frame.sort_values(by= ['mean revenues per app ($)'], ignore_index=True, inplace=True ,ascending=False)
 merged_frame
+
 #%% md
 
 <h4>Graphical representation </h4>
@@ -394,8 +403,8 @@ merged_frame
 #%%
 
 merged_frame.plot.barh(x='category', y='mean revenues per app ($)', color=['orange','blue'], figsize = (8,5))
-plt.ylabel('Category', fontsize = 12)
-plt.title('Revenue per Application', fontsize = 15)
+plt.ylabel('Category', fontsize = 13)
+plt.title('Mean Application Revenue per Category', fontsize = 15)
 
 
 #%% md
@@ -410,25 +419,55 @@ We can clearly see from the sorted dataframe and the graph that the categories f
 
 
 #%% md
+
 ## Question N.3
-### Does users’ rating depend on price?
-#%%
-df = alldata[alldata.price < 100]
-fig, ax = plt.subplots()
-fig.set_size_inches(8, 5)
-sns.regplot(x='price', y='rating',data=df,
-            fit_reg= True, color = 'g',dropna=True, line_kws={'color' :'red'})
-#%%
-df = df[df['price'] < 60]
-fig, ax = plt.subplots()
-fig.set_size_inches(8, 5)
-sns.regplot(x='price', y='rating',data=df, color = 'b',dropna=True,  line_kws={'color' : 'r'})
+### Does users’ rating depend upon price?
+<i>**(Michele Parigi)**</i>
+
 #%% md
+
+We make a prediction: there will be higher ratings for apps that cost more because they should be at an higher quality.
+
+First, we try to make the analysis with prices below 100$ because there are not many data over that digit.
+
+#%%
+
+# we modify the dataset to have only prices below 100$
+df = alldata[alldata.price < 100]
+
+# we set the size of the graph
+fig, ax = plt.subplots()
+fig.set_size_inches(8, 5)
+# we create the regression line through seaborn
+sns.regplot(x='price', y='rating', data=df,
+            fit_reg= True, color='g', dropna=True, line_kws={'color':'red'})
+
+#%% md
+
+It seems that there is no correlation between price and users' rating. Now we try setting 60$ as limit of price to see if there are any changes.
+
+#%%
+
+# we modify the dataset to have only prices below 60$
+df = alldata[alldata.price < 60]
+
+# we set the size of the graph
+fig, ax = plt.subplots()
+fig.set_size_inches(8, 5)
+
+# we create the regression line through seaborn
+sns.regplot(x='price', y='rating', data=df,
+            fit_reg= True, color='b', dropna=True, line_kws={'color':'red'})
+
+#%% md
+
+Even with this graph, we can see that the regression line is quite flat. This means there isn't a strong correlation between users' rating and price: our prediction is wrong according to these datasets.
+
+#%% md
+
 ## Question N.4
 ### Do ratings, popularity and prices depend on applications' size?
-#%%
-x=alldata["size (MB)"]
-y=alldata['price']
+<i> **(Beatrice Sibilia)** </i>
 
 #%%
 
@@ -437,15 +476,17 @@ def linear_regression(x, y):
     x_mean = x.mean()
     y_mean = y.mean()
 
-    B1_num = ((x - x_mean) * (y - y_mean)).sum()
-    B1_den = ((x - x_mean)**2).sum()
-    B1 = B1_num / B1_den
+    slope_num = ((x - x_mean) * (y - y_mean)).sum()
+    slope_den = ((x - x_mean)**2).sum()
+    slope = slope_num / slope_den
 
-    B0 = y_mean - (B1*x_mean)
+    intercept = y_mean - (slope*x_mean)
 
-    reg_line = 'y = {} + {}β'.format(B0, round(B1, 3))
+    reg_line = 'y = {} + {}x'.format(round(intercept,3), round(slope,3))
+#The format() method formats the specified value(s) and insert them inside the string's placeholder ( {} )
+#The round() function returns a floating point number that is a rounded version of the specified number, with the specified number of decimals.
 
-    return (B0, B1, reg_line)
+    return (intercept, slope, reg_line)
 
 #%%
 
@@ -454,37 +495,90 @@ def corr_coef(x, y):
 
     num = (N * (x*y).sum()) - (x.sum() * y.sum())
     den = np.sqrt((N * (x**2).sum() - x.sum()**2) * (N * (y**2).sum() - y.sum()**2))
-    R = num / den
-    return R
+    r = num / den
+    return r
 
 #%%
 
-B0, B1, reg_line = linear_regression(x, y)
+#SIZE AND PRICE
+
+x=alldata["size (MB)"]
+y=alldata['price']
+
+intercept, slope, reg_line = linear_regression(x, y)
 print('Regression Line: ', reg_line)
-R = corr_coef(x, y)
-print('Correlation Coef.: ', R)
-print('"Goodness of Fit": ', R**2)
+r = corr_coef(x, y)
+print('Correlation Coef.: ', round(r,3))
+print('"Goodness of Fit": ', round(r**2,3))
+
+fig, ax = plt.subplots()
+fig.set_size_inches(8, 5)
+sns.regplot(x=x, y=y, data= alldata,
+            fit_reg= True, color='b', dropna=True, line_kws={'color':'red'})
+
 
 #%%
-sns.regplot(x="size (MB)", y="price",data=alldata,
-            fit_reg= True, color = 'g',dropna=True, line_kws={'color' :'red'})
 
+data60 = alldata[alldata.price < 60]
+x=data60["size (MB)"]
+y=data60['price']
+
+intercept, slope, reg_line = linear_regression(x, y)
+print('Regression Line: ', reg_line)
+r = corr_coef(x, y)
+print('Correlation Coef.: ', round(r,3))
+print('"Goodness of Fit": ', round(r**2,3))
+
+fig, ax = plt.subplots()
+fig.set_size_inches(8, 5)
+# we create the regression line through seaborn
+sns.regplot(x=x, y=y, data= data60,
+            fit_reg= True, color='b', dropna=True, line_kws={'color':'red'})
 
 #%%
-data = alldata.drop(alldata[(alldata['price'] >= 60)].index)
-data = data.loc[(data['size (MB)'] > 0) & (data['size (MB)'] < 2000)]
 
-sns.regplot(x="size (MB)", y="price",data=data,
-            fit_reg= True, color = 'g', dropna=True,line_kws={'color' :'red'})
+#SIZE AND INTERACTIONS
+
+x=alldata["size (MB)"]
+y=alldata['interactions']
+
+intercept, slope, reg_line = linear_regression(x, y)
+print('Regression Line: ', reg_line)
+r = corr_coef(x, y)
+print('Correlation Coef.: ', round(r,3))
+print('"Goodness of Fit": ', round(r**2,3))
+
+fig, ax = plt.subplots()
+fig.set_size_inches(8, 5)
+# we create the regression line through seaborn
+sns.regplot(x=x, y=y, data= alldata,
+            fit_reg= True, color='magenta', dropna=True, line_kws={'color':'blue'})
+
 #%%
-# Using pairplot we'll visualize the data for correlation
-sns.pairplot(data, x_vars="size (MB)",
-             y_vars="price", size=4, aspect=1, kind='scatter')
-plt.show()
+
+#SIZE AND RATING
+
+x=alldata["size (MB)"]
+y=alldata['rating']
+
+intercept, slope, reg_line = linear_regression(x, y)
+print('Regression Line: ', reg_line)
+r = corr_coef(x, y)
+print('Correlation Coef.: ', round(r,3))
+print('"Goodness of Fit": ', round(r**2,3))
+
+fig, ax = plt.subplots()
+fig.set_size_inches(8, 5)
+# we create the regression line through seaborn
+sns.regplot(x=x, y=y, data= alldata,
+            fit_reg= True, color='g', dropna=True, line_kws={'color':'orange'})
 
 #%% md
 
 ## Question 5
+### Do most popular Apps have some characteristics in common?
+<i>**(Giammarco Bozzelli</i> and <i>Marco Cavaliere)**</i>
+
 #%%
 
 frame = alldata.sort_values(by = ['rating', 'interactions'], ascending = False)
@@ -589,25 +683,11 @@ plt.ylabel('Categories', fontsize = 12)
 plt.title('Which is the most common category in the top 50 apps?', fontsize = 15)
 plt.show()
 
-#%%
-
-'''#Price - Big money
-price_top = frame.iloc[:500,:] #aumento numero app per vedere che prezzo conviene siccome 1$ e 4.99 uguali
-price_top = price_top.drop(price_top[(price_top['price'] == 0.0)].index)
-prices = (price_top['price'].tolist())  # getting all category types
-price_dic = {} # dict to contain the rating for each category type
-for price in prices:  # filling the dictionary
-   if price not in price_dic:
-       price_dic[price]=1
-   else:
-       price_dic[price]+=1
-price_dic
-'''
 
 #%%
 
 #STORE
-#Price - Big money
+#Which Appstore is more frequent in the top 50
 store_top = frame.iloc[:50,:]
 store_dic = app.dictionary_top(store_top,'store')
 store_dic
@@ -616,7 +696,7 @@ store_dic
 
 #plot a pie chart
 plt.figure(figsize = (6,6))
-plt.pie(list(store_dic.values()),labels = list(store_dic.keys()), explode = (0.2,0))
+plt.pie(list(store_dic.values()),labels = list(store_dic.keys()), textprops={'fontsize': 15})
 
 #%%
 
