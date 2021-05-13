@@ -230,43 +230,61 @@ pie = app.pie_chart(alldata)
 ### Which App Category do users prefer?
 **<i>(Giammarco Bozzelli</i> and <i>Marco Cavaliere)**</i>
 
+Since we want to find the category that users prefer we need to give applications a more _realistic_ rating,
+this is becasue one app may have a **5 stars rating** but just **few interactions**, so we have to give a **_weight_**
+to each rating. To do this we have built the **top_categories_weighted** function in the _appstore_ module that takes as
+input a Dataframe and _optionally_ the store name that we want to study, and return a dictionary with categories as keys
+and the _weighted ratings_ as values.
 
+We also created another function called **_graphic rating_** to create and print the dictionary coming
+from the **top_categories_weighted** function to visualize results
+#%% md
+We first analyze each store differently, so we:
+- Use the _top categories weighted_ function to get the dictionary
+- Use the _praphic rating_ function to represent results
+
+We start from  **Playstore**
 #%%
 
-#figure, axis = plt.subplots(3)
-
-#%%
-
-print(app.top_categories_weighted(alldata))
-
-allcateg_dict= app.top_categories_weighted(alldata)
-
-app.grafic_rating(allcateg_dict)
-
-#%%
-
-print(app.top_categories_weighted(alldata,'playstore'))
 
 pscateg_dict=app.top_categories_weighted(alldata,'playstore')
 
 app.grafic_rating(pscateg_dict)
 
+#%% md
+As we can see by the graph above the **_Health & Fitness_** category is the highest rated in the _Playstore_.
+
+We then move on analyzing the **_Applestore_**
 #%%
 
-print(app.top_categories_weighted(alldata,'appstore'))
 
 ascateg_dict=app.top_categories_weighted(alldata,'appstore')
 
 app.grafic_rating(ascateg_dict)
+#%% md
+And the **_Lifestyle_** category results as the prefered one in the _Appstore_.
 
+Now it is turn for the **_Microsoftstore_**
 #%%
-
-print(app.top_categories_weighted(alldata,'microsoft_store'))
-
 mccateg_dict=app.top_categories_weighted(alldata,'microsoft_store')
 
 app.grafic_rating(mccateg_dict)
+#%% md
+In the _Microsoftstore_ the most liked category is **_Education_**.
 
+### What will happen if we use all appstores together?
+#%%
+allcateg_dict= app.top_categories_weighted(alldata)
+
+app.grafic_rating(allcateg_dict)
+#%% md
+### Results
+The prefered category is different for eache store:
+- **Playstore** --> _Health & Fitness_
+- **Appstore** --> _Lifestyle_
+- **Microsoft** --> _Education_
+
+But if we use the whole DataFrame we found that the highest rated category is: Health & Fitness
 #%% md
 
 ## Question N.2
@@ -695,4 +713,3 @@ top_50
 
 #%%
 
-frie
