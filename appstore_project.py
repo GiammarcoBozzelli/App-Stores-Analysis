@@ -1,4 +1,5 @@
 #%% md
+
 # Group 1
 # Are different Appstores so different?
 <ul><b>
@@ -8,19 +9,18 @@
 <li>Parigi Michele</li>
 <li>Sibilia Beatrice</li>
 </ul><b>
+
 #%% md
 
 ## Link to the Google Drive folder containing the datasets
 
-[group-1-project](www.link.com)
-
+__[group-1-project](https://drive.google.com/drive/folders/1WpJfuIUlIh2z5hbM_b9GL8sOLfwKgE_n?usp=sharing)__
 #%% md
 
 ## Data Loading and Cleaning
 
+Before starting we import all the modules we will need troughout the project
 
-#%% md
- Before starting we import all the modules we will need troughout the project
 #%%
 
 import os.path
@@ -34,27 +34,41 @@ import appstore as app #import as app the module we created to store functions i
 
 We decided to <b> load </b> and <b> clean </b> one dataset at the time starting from the file <i> 'playstore.csv' </i>
 ### Playstore.csv
+
 #%% md
+
 First fo all we need to make sure that the file path is always correct no matter the operating system to do this we decided to use the 'os.getcwd()' function, and also we print the list of the files in the folder path
+
 #%%
+
 data_folder = os.getcwd() #get the current working directory that we will use as path
 file_dir_names = os.listdir(data_folder) #list of all files in the directory
 print(data_folder,'\n', file_dir_names)
 
 #%% md
+
 Then we import the dataset from <i> 'playstore.csv' </i> directly as a DataFrame using the Pandas' funciton <i> '.read_csv' </i>
+
 #%%
+
 playstore = pd.read_csv(os.path.join(data_folder,'playstore.csv'))# open playstore.csv as a Pandas DataFrame
 playstore
+
 #%% md
+
 Now we keep only the columns we will need to use and we rename them
+
 #%%
+
 playstore = playstore.loc[:,["app_name","genre","rating","reviews","cost_label","size","installs"]] #get only the columns we need
 playstore.columns = ["name","category","rating","reviews","price","size (MB)","installs"] #renaming all columns
 
 #%% md
+
 Time to start cleaning the <b>playstore</b> DataFrame!
+
 #%%
+
 playstore['price'] = playstore['price'].astype(str) #convert all cells in the columns into strings
 
 bad = [",","₫"," Buy"] #list of all things to remove
@@ -77,29 +91,44 @@ for s in bad:
 playstore['size (MB)'] = playstore['size (MB)'].str.replace('Varies with device','0')
 playstore['size (MB)']= playstore['size (MB)'].fillna(0)
 playstore['size (MB)'] = np.float64(playstore['size (MB)'])
+
 #%%
+
 playstore['installs'] = playstore['installs'].str.strip('+')
 playstore['installs'] = playstore['installs'].str.replace(',', '')
+
 #%%
+
 playstore['reviews'] = playstore['reviews'].str.replace(' total', '')
 playstore['reviews'] = playstore['reviews'].str.replace(',', '')
 playstore['reviews']=np.float64(playstore['reviews'])
+
 #%% md
+
 The last thing we need to do now is add a column <i><b> 'store' </b></i> that specifies to store, this well be useful when we will merge together all datasets
+
 #%%
+
 playstore["store"] = "playstore" #add a column to specify the store
 playstore
 
 #%% md
+
 ## Msft.csv -> microsoft store
 As we did before we import the dataset as a DataFrame using the Pandas' funciton '.read_csv'
+
 #%%
+
 microsoft_store = pd.read_csv(os.path.join(data_folder, 'msft.csv'))
 microsoft_store
+
 #%% md
+
 We then procede selecting only the columns we need and renaming them.
 This time we replace
+
 #%%
+
 #clean columns
 microsoft_store = microsoft_store.loc[:, ["Name", "Rating", "No of people Rated", "Category", "Price"]] #get only the columns we nee
 microsoft_store.columns = ["name", "rating", "No of people Rated", "category", "price"]#renaming the columns
@@ -186,13 +215,13 @@ for k,v in dict_categories.items():
     for x in v:
         alldata['category'].replace(x, k, inplace = True) #replace sub categories with the categories we want
 
-alldata
+#%%
 pie = app.pie_chart(alldata)
 
 #%% md
 
-<h2> Question N.1 <h2>
-
+## Question N.1
+### Which App Category do users prefer?
 #%%
 
 print(app.top_categories_weighted(alldata))
@@ -207,7 +236,7 @@ print(app.top_categories_weighted(alldata,'appstore'))
 
 #%%
 
-print(app.top_categories_weighted(alldata,'windows_store'))
+print(app.top_categories_weighted(alldata,'microsoft_store'))
 
 #%%
 
@@ -247,11 +276,14 @@ app.grafic_rating(mccateg_dict)
 
 #%% md
 
-<h2>Research Question 2</h2>
-<p><Which category are the most expensive for the users?<br>
+## Question N.2
+### For which App Category are users willing to pay more?
 
-1) For each app with same category we compute the price mean<p>
-2) Then we represent it graphically <p>
+1. For each app with same category we compute the price mean<p>
+1. Then we compute the mean of interactions per category <p>
+1. Then we find a relation between the two and sort it in a new dataframe <p>
+1. Finally we represent it graphically <p>
+
 
 #%%
 
@@ -259,7 +291,7 @@ app.grafic_rating(mccateg_dict)
 df = alldata.copy()
 
 #Selecting the essential columns for our research question
-df = df[['category', 'price','store']]
+df = df[['category', 'price','interactions','store']]
 df
 
 #%% md
@@ -286,7 +318,8 @@ df.isnull().sum()
 
 We can now work on the research question:<p>
 - For each category a mean will be computed
-- The mean will be displayed and sorted in a new dataframe
+- For each category the sum of interactions will be computed
+- The mean and the interactions will be displayed and sorted in a new dataframe
 
 #%%
 
@@ -301,59 +334,99 @@ for category in categories:  # filling the dictionary
        continue
 category_list
 
+#%% md
+
+Note: we are computing the mean of interactions since it is a liable indicator of how many people downloaded the app.
 
 #%%
 
 #Use the previous list to create a dictionary with the price mean of each category
-price_mean_dict= {}
+price_mean_dict= {}  #creating an empty list to store the key=category and values=means
+interaction_list= [] #creating an empty list just to store the sum of interactions for each category
 for x in category_list:
-    a = df[df['category']==x]
-    price_mean_dict[x]=a['price'].mean()
-
-price_mean_dict
-
-
-#%%
-
-#Visualising the dictionary in a dataframe
-
-df_mean_price = pd.Series(price_mean_dict).rename_axis('category').reset_index(name='mean price')
-df_mean_price
+    a = df[df['category']==x] #acceding the right rows for each category
+    price_mean_dict[x]=a['price'].mean() #computing the mean over the columns for the series a['price'] of that specific category
+    interaction_list.append(a['interactions'].mean()) #computing the mean over the columns for the series a['interactions'] of that specific category
+print(price_mean_dict)
+print(interaction_list)
 
 #%%
 
-#sorting values in ascending order
-df_mean_price.sort_values(by=['mean price'], inplace=True, ascending = False)
-df_mean_price
+#Visualising the dictionary in a dataframe and the list in a series
+
+df_mean_price = pd.Series(price_mean_dict).rename_axis('category').reset_index(name='mean price ($)')
+print(df_mean_price)
+df_interaction = pd.Series(interaction_list).rename_axis('mean of interactions')
+print(df_interaction)
+
+#%%
+
+#Merging the series with the dataframe
+frames = [df_mean_price,df_interaction]
+merged_frame = pd.concat(frames, axis=1)
+merged_frame.rename(columns = {0:'mean of interactions'}, inplace = True) #renaming the column
+merged_frame['mean of interactions'] = merged_frame['mean of interactions'].astype(int) #changint the type of the column, in order to make it more comprehensible
+merged_frame
 
 #%% md
 
-As we can clearly see from the data, the categories: Education and Tool & Utilities are the ones with highest prices.
+- Now we have to understand what's the mean revenue for each app of the category in order to answer our research question <p>
+- to compute it we just need to multuply the last two columns
 
+#%%
+
+#creating a new column
+merged_frame['mean revenues per app ($)']=merged_frame['mean price ($)']*merged_frame['mean of interactions']
+merged_frame
+
+#%%
+
+#Sorting values by mean revenues per app
+merged_frame.sort_values(by= ['mean revenues per app ($)'], ignore_index=True, inplace=True ,ascending=False)
+merged_frame
 #%% md
 
 <h4>Graphical representation </h4>
 
-- We are now going to display the results trough a bar chart
+- We are now going to display the mean revenue per application trough a **bar chart**
 
 
 #%%
 
-df_mean_price.plot.barh(x='category', y='mean price', rot=0, color=['orange','blue'])
+merged_frame.plot.barh(x='category', y='mean revenues per app ($)', color=['orange','blue'], figsize = (8,5))
+plt.ylabel('Category', fontsize = 12)
+plt.title('Revenue per Application', fontsize = 15)
+
 
 #%% md
 
-<h4> Conclusion <h4>
+#### Analytical conclusion
+
+We can clearly see from the sorted dataframe and the graph that the categories for which users are willing to pay more are:
+1. Photos & Videos
+1. Social
+1. Games
+
+
 
 #%% md
-
-The categories below are the most expensive among all stores
-- Education
-- tools & Utilities
-- Health & Fitness
-
+## Question N.3
+### Does users’ rating depend on price?
 #%%
-
+df = alldata[alldata.price < 100]
+fig, ax = plt.subplots()
+fig.set_size_inches(8, 5)
+sns.regplot(x='price', y='rating',data=df,
+            fit_reg= True, color = 'g',dropna=True, line_kws={'color' :'red'})
+#%%
+df = df[df['price'] < 60]
+fig, ax = plt.subplots()
+fig.set_size_inches(8, 5)
+sns.regplot(x='price', y='rating',data=df, color = 'b',dropna=True,  line_kws={'color' : 'r'})
+#%% md
+## Question N.4
+### Do ratings, popularity and prices depend on applications' size?
+#%%
 x=alldata["size (MB)"]
 y=alldata['price']
 
@@ -393,26 +466,26 @@ print('Correlation Coef.: ', R)
 print('"Goodness of Fit": ', R**2)
 
 #%%
+sns.regplot(x="size (MB)", y="price",data=alldata,
+            fit_reg= True, color = 'g',dropna=True, line_kws={'color' :'red'})
 
-# Import matplotlib and seaborn libraries to visualize the data
-
-data = alldata.drop(alldata[(alldata['price'] >= 60)].index)
-#alldata=sns.load_dataset(alldata)
-g = sns.regplot(x="size (MB)", y="price",data=alldata, color="g")
-g= sns.jointplot(x="size (MB)", y="price",data=alldata, kind="reg")
-regline = g.ax_joint.get_lines()[0]
-regline.set_color("red")
 
 #%%
+data = alldata.drop(alldata[(alldata['price'] >= 60)].index)
+data = data.loc[(data['size (MB)'] > 0) & (data['size (MB)'] < 2000)]
 
+sns.regplot(x="size (MB)", y="price",data=data,
+            fit_reg= True, color = 'g', dropna=True,line_kws={'color' :'red'})
+#%%
 # Using pairplot we'll visualize the data for correlation
 sns.pairplot(data, x_vars="size (MB)",
              y_vars="price", size=4, aspect=1, kind='scatter')
 plt.show()
 
-#%%
+#%% md
 
-#QUESTION N. 5
+## Question 5
+#%%
 
 frame = alldata.sort_values(by = ['rating', 'interactions'], ascending = False)
 frame.head(10)
@@ -423,28 +496,33 @@ top_50 = frame.iloc[:50,:]
 
 #to drop rows with size = 0
 top_50 = top_50.drop(top_50[(top_50['size (MB)'] == 0)].index)
-top_50
+top_50.head(10)
 
 #%%
 
-category_rating_dic = app.dictionary_top(top_50,'category')
-category_rating_dic
+category_dic = app.dictionary_top(top_50,'category')
+category_dic
 
 #%%
 
-categories = category_rating_dic.keys()
-ratings = category_rating_dic.values()
+categories = category_dic.keys()
+ratings = category_dic.values()
 y_pos = np.arange(len(categories))
+plt.figure(figsize = (9,6))
 plt.barh(y_pos, ratings, align='center', alpha=0.5)
 plt.yticks(y_pos, categories)
-plt.xlabel('rating')
-plt.ylabel('categories')
-plt.title('which is the most common category in the top 50 apps?')
+plt.xlabel('Number of Apps',  fontsize = 12)
+plt.ylabel('Categories', fontsize = 12)
+plt.title('Which is the most common category in the top 50 apps?', fontsize = 15)
 plt.show()
 
 #%%
 
-top_50.plot.bar(x="name", y="size (MB)", rot=70, title="Size (MB) in the top 50", figsize = (15,8))
+top_50.plot.bar(x="name", y="size (MB)", figsize = (15,8))
+plt.title("Size (MB) in the top 50", fontsize = 18)
+plt.xticks([]) # Disable xticks.
+plt.xlabel('Applications', fontsize = 15)
+plt.ylabel('Size in MB', fontsize = 15)
 plt.show()
 
 #%%
@@ -455,8 +533,12 @@ for i in range(7):
 
 #%%
 
-top_50.plot.bar(x="name", y="size (MB)", rot=70, title="Size (MB) in the top 50")
-plt.show(block=True)
+top_50.plot.bar(x="name", y="size (MB)", figsize = (15,8))
+plt.title("Size (MB) in the top 50", fontsize = 18)
+plt.xticks([]) # Disable xticks.
+plt.xlabel('Applications', fontsize = 15)
+plt.ylabel('Size in MB', fontsize = 15)
+plt.show()
 
 #%%
 
@@ -478,12 +560,12 @@ price_dic
 categories = price_dic.keys()
 ratings = price_dic.values()
 y_pos = np.arange(len(categories))
-
+plt.figure(figsize = (9,6))
 plt.barh(y_pos, ratings, align='center', alpha=0.5)
 plt.yticks(y_pos, categories)
-plt.xlabel('rating')
-plt.ylabel('categories')
-plt.title('which is the most common category in the top 50 apps?')
+plt.xlabel('Rating', fontsize = 12)
+plt.ylabel('Categories', fontsize = 12)
+plt.title('which is the most common category in the top 50 apps?', fontsize = 15)
 plt.show()
 
 #%%
@@ -499,12 +581,12 @@ price_dic
 categories = price_dic.keys()
 ratings = price_dic.values()
 y_pos = np.arange(len(categories))
-
+plt.figure(figsize = (9,6))
 plt.barh(y_pos, ratings, align='center', alpha=0.5)
 plt.yticks(y_pos, categories)
-plt.xlabel('rating')
-plt.ylabel('categories')
-plt.title('which is the most common category in the top 50 apps?')
+plt.xlabel('Rating', fontsize = 12)
+plt.ylabel('Categories', fontsize = 12)
+plt.title('Which is the most common category in the top 50 apps?', fontsize = 15)
 plt.show()
 
 #%%
@@ -533,6 +615,7 @@ store_dic
 #%%
 
 #plot a pie chart
+plt.figure(figsize = (6,6))
 plt.pie(list(store_dic.values()),labels = list(store_dic.keys()), explode = (0.2,0))
 
 #%%
@@ -546,3 +629,4 @@ top_50 = top_50.loc[top_50['store'] == 'appstore']
 top_50
 
 #%%
+
