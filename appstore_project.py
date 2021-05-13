@@ -582,18 +582,16 @@ sns.regplot(x=x, y=y, data= alldata,
 ### Do most popular Apps have some characteristics in common?
 <i>**(Giammarco Bozzelli</i> and <i>Marco Cavaliere)**</i>
 
+First we need to find which are the most successful applications; to do so we sort the dataframe by the
+**_'rating'_** and **_'interactions'_** columns. We now drop each row with NaN values in the
+**_'size (MB)'_** column so that we will have no problem plotting the graphs and select the first 50 apps.
 #%%
 
-frame = alldata.sort_values(by = ['rating', 'interactions'], ascending = False)
-frame.head(10)
-#to select the first 50 popular apps
+alldata.sort_values(by = ['rating','interactions'], ascending = False, inplace = True)
+frame = alldata.drop(alldata[(alldata['size (MB)'] == 0)].index)#to select the first 50 popular apps
 top_50 = frame.iloc[:50,:]
-
-#%%
-
-#to drop rows with size = 0
-top_50 = top_50.drop(top_50[(top_50['size (MB)'] == 0)].index)
 top_50.head(10)
+
 
 #%%
 
@@ -654,14 +652,14 @@ price_dic
 
 #%%
 
-categories = price_dic.keys()
-ratings = price_dic.values()
-y_pos = np.arange(len(categories))
+price = price_dic.keys()
+freq = price_dic.values()
+y_pos = np.arange(len(price))
 plt.figure(figsize = (9,6))
-plt.barh(y_pos, ratings, align='center', alpha=0.5)
-plt.yticks(y_pos, categories)
-plt.xlabel('Rating', fontsize = 12)
-plt.ylabel('Categories', fontsize = 12)
+plt.barh(y_pos, freq, align='center', alpha=0.5)
+plt.yticks(y_pos, price)
+plt.xlabel('Frequency', fontsize = 12)
+plt.ylabel('Prices', fontsize = 12)
 plt.title('which is the most common category in the top 50 apps?', fontsize = 15)
 plt.show()
 
@@ -675,15 +673,15 @@ price_dic
 
 #%%
 
-categories = price_dic.keys()
-ratings = price_dic.values()
-y_pos = np.arange(len(categories))
+price = price_dic.keys()
+freq = price_dic.values()
+y_pos = np.arange(len(price))
 plt.figure(figsize = (9,6))
-plt.barh(y_pos, ratings, align='center', alpha=0.5)
-plt.yticks(y_pos, categories)
-plt.xlabel('Rating', fontsize = 12)
-plt.ylabel('Categories', fontsize = 12)
-plt.title('Which is the most common category in the top 50 apps?', fontsize = 15)
+plt.barh(y_pos, freq, align='center', alpha=0.5)
+plt.yticks(y_pos, price)
+plt.xlabel('Frequency', fontsize = 12)
+plt.ylabel('Prices', fontsize = 12)
+plt.title('which is the most common category in the top 50 apps?', fontsize = 15)
 plt.show()
 
 
@@ -703,11 +701,11 @@ plt.pie(list(store_dic.values()),labels = list(store_dic.keys()), textprops={'fo
 
 #%%
 
-#let's now put together all the most common characteristics to find apps that ahve them all
+#let's now put together all the most common characteristics to find apps that them them all
 top_50 = top_50[top_50['category'] == 'Games']
-top_50 = top_50.loc[(top_50['size (MB)'] >= 29) & (top_50['size (MB)'] <= 127)]
+top_50 = top_50.loc[(top_50['size (MB)'] <= 105.320389392)]
 top_50 = top_50.loc[top_50['price'] == 0]
-top_50 = top_50.loc[top_50['store'] == 'appstore']
+top_50 = top_50.loc[top_50['store'] == 'playstore']
 
 top_50
 
