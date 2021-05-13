@@ -45,7 +45,8 @@ def pie_chart(data,store_type = None): #Giammarco
             category_dic[category] += 1# adding the new key:value to the dictionary
 
     plt.figure(figsize = (8,8))
-    plt.pie(list(category_dic.values()), labels=list(category_dic.keys()),rotatelabels = 30 ,autopct='%1.1f%%', explode = (0.1,0,0,0,0,0,0,0,0,0,0,0,0))
+    plt.pie(list(category_dic.values()), labels=list(category_dic.keys()),rotatelabels = 30 ,
+            autopct='%1.1f%%', explode = (0.1,0,0,0,0,0,0,0,0,0,0,0,0), textprops={'fontsize': 12})
 
     return (category_dic)
 
