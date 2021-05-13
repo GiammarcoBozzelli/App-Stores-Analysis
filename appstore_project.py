@@ -284,7 +284,7 @@ The prefered category is different for eache store:
 - **Appstore** --> _Lifestyle_
 - **Microsoft** --> _Education_
 
-But if we use the whole DataFrame we found that the highest rated category is: Health & Fitness
+But if we use the whole DataFrame we found that the highest rated category is: **Health & Fitness**
 #%% md
 
 ## Question N.2
