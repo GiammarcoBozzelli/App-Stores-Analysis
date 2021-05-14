@@ -108,4 +108,3 @@ def top_50_priceplot(dic):
     plt.title('which is the most common category in the top 50 apps?', fontsize = 15)
     plt.show()
     return
-
