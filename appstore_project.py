@@ -84,10 +84,14 @@ for s in bad:
 playstore['price'] = playstore['price'].str.replace('Install', '0')
 playstore['price'] = playstore['price'].str.split(' ').str[-1] #was 200 now is 7
 playstore['price'] = np.float32(playstore['price'])*0.000043
+
 #%% md
+
 We go on cleaning the **_'size'_** column by removing unwanted characters, replacing NaN values with 0
 (that we will later on remove) and converting the column into _numpy.float32_
+
 #%%
+
 bad = ['M',',','k']
 for s in bad:
     playstore["size (MB)"] = playstore["size (MB)"].str.replace(s,"")
@@ -97,12 +101,15 @@ playstore['size (MB)']= playstore['size (MB)'].fillna(0)
 playstore['size (MB)'] = np.float32(playstore['size (MB)'])
 
 #%% md
+
 Now is time to clean the **_'installs'_** and the **_'reviews'_** columns
+
 #%%
 
 playstore['installs'] = playstore['installs'].str.strip('+')
 playstore['installs'] = playstore['installs'].str.replace(',', '')
 playstore['installs'] = np.float32(playstore['installs'])
+
 #%%
 
 playstore['reviews'] = playstore['reviews'].str.replace(' total', '')
@@ -114,6 +121,7 @@ playstore['reviews']=np.float32(playstore['reviews'])
 The last thing we need to do now is add a column **_'store' _** that specifies to store, this well be useful when we will merge all datasets together
 
 #%%
+
 playstore["store"] = "playstore" #add a column to specify the store
 playstore
 
@@ -238,12 +246,15 @@ and the _weighted ratings_ as values.
 
 We also created another function called **_graphic rating_** to create and print the dictionary coming
 from the **top_categories_weighted** function to visualize results
+
 #%% md
+
 We first analyze each store differently, so we:
 - Use the _top categories weighted_ function to get the dictionary
 - Use the _praphic rating_ function to represent results
 
 We start from  **Playstore**
+
 #%%
 
 
@@ -252,32 +263,44 @@ pscateg_dict=app.top_categories_weighted(alldata,'playstore')
 app.grafic_rating(pscateg_dict)
 
 #%% md
+
 As we can see by the graph above the **_Health & Fitness_** category is the highest rated in the _Playstore_.
 
 We then move on analyzing the **_Applestore_**
+
 #%%
 
 
 ascateg_dict=app.top_categories_weighted(alldata,'appstore')
 
 app.grafic_rating(ascateg_dict)
+
 #%% md
+
 And the **_Lifestyle_** category results as the prefered one in the _Appstore_.
 
 Now it is turn for the **_Microsoftstore_**
+
 #%%
+
 mccateg_dict=app.top_categories_weighted(alldata,'microsoft_store')
 
 app.grafic_rating(mccateg_dict)
+
 #%% md
+
 In the _Microsoftstore_ the most liked category is **_Education_**.
 
 ### What will happen if we use all appstores together?
+
 #%%
+
 allcateg_dict= app.top_categories_weighted(alldata)
 
 app.grafic_rating(allcateg_dict)
+
 #%% md
+
 ### Results
 The prefered category is different for eache store:
 - **Playstore** --> _Health & Fitness_
@@ -285,6 +308,7 @@ The prefered category is different for eache store:
 - **Microsoft** --> _Education_
 
 But if we use the whole DataFrame we found that the highest rated category is: **Health & Fitness**
+
 #%% md
 
 ## Question N.2
@@ -583,46 +607,29 @@ sns.regplot(x=x, y=y, data= alldata,
 <i>**(Giammarco Bozzelli</i> and <i>Marco Cavaliere)**</i>
 
 First we need to find which are the most successful applications; to do so we sort the dataframe by the
-**_'rating'_** and **_'interactions'_** columns. We now drop each row with NaN values in the
-**_'size (MB)'_** column so that we will have no problem plotting the graphs and select the first 50 apps.
+**_'rating'_** and **_'interactions'_** columns.
 #%%
-
 alldata.sort_values(by = ['rating','interactions'], ascending = False, inplace = True)
-frame = alldata.drop(alldata[(alldata['size (MB)'] == 0)].index)#to select the first 50 popular apps
+alldata.head(10)
+#%% md
+We now drop each row with NaN values in the
+**_'size (MB)'_** column so that we will have no problem plotting the graphs and select the first 50 apps.
+
+#%%
+frame = alldata.drop(alldata[(alldata['size (MB)'] == 0)].index)
 top_50 = frame.iloc[:50,:]
 top_50.head(10)
-
 
 #%%
 
 category_dic = app.dictionary_top(top_50,'category')
+app.top_50_catplot(category_dic)
 
-def top_50_catplot(dic):
-    categories = dic.keys()
-    ratings = dic.values()
-    y_pos = np.arange(len(categories))
-    plt.figure(figsize=(9, 6))
-    plt.barh(y_pos, ratings, align='center', alpha=0.5)
-    plt.yticks(y_pos, categories)
-    plt.xlabel('Number of Apps', fontsize=12)
-    plt.ylabel('Categories', fontsize=12)
-    plt.title('Which is the most common category in the top 50 apps?', fontsize=15)
-    plt.show()
-    return
-#%%
-top_50_catplot(category_dic)
 
 #%%
-def top_50_sizeplot(data):
-    data.plot.bar(x="name", y="size (MB)", figsize = (15,8))
-    plt.title("Size (MB) in the top 50", fontsize = 18)
-    plt.xticks([]) # Disable xticks.
-    plt.xlabel('Applications', fontsize = 15)
-    plt.ylabel('Size in MB', fontsize = 15)
-    plt.show()
-    return
-#%%
-top_50_sizeplot(top_50)
+
+app.top_50_sizeplot(top_50)
+
 #%%
 
 #remove the 5 applications with largest size
@@ -630,7 +637,9 @@ for i in range(7):
     top_50.drop(top_50['size (MB)'].idxmax(), inplace = True)
 
 #%%
-top_50_sizeplot(top_50)
+
+app.top_50_sizeplot(top_50)
+
 #%%
 
 #trovare mean e standard deviation del grafico
@@ -642,25 +651,13 @@ print('Standard Deviation =',top_50['size (MB)'].std())
 
 #PRICE - Free
 price_top = frame.iloc[:50,:]
-price_dic = app.dictionary_top(price_top,'price')
-prices = (price_top['price'].tolist())  # getting all category types
+price_dic = app.dictionary_top(price_top,'price')  # getting all category types
 price_dic
 
 #%%
-def top_50_priceplot(dic):
-    price = price_dic.keys()
-    freq = price_dic.values()
-    y_pos = np.arange(len(price))
-    plt.figure(figsize = (9,6))
-    plt.barh(y_pos, freq, align='center', alpha=0.5)
-    plt.yticks(y_pos, price)
-    plt.xlabel('Frequency', fontsize = 12)
-    plt.ylabel('Prices', fontsize = 12)
-    plt.title('which is the most common category in the top 50 apps?', fontsize = 15)
-    plt.show()
-    return
-#%%
-top_50_priceplot(price_dic)
+
+app.top_50_priceplot(price_dic)
+
 #%%
 
 #Price - Big money
@@ -670,7 +667,9 @@ price_dic = app.dictionary_top(price_top,'price')
 price_dic
 
 #%%
-top_50_priceplot(price_dic)
+
+app.top_50_priceplot(price_dic)
+
 
 #%%
 
@@ -697,38 +696,58 @@ top_50 = top_50.loc[top_50['store'] == 'playstore']
 top_50
 
 #%% md
+
 Observing this table we see that interactions are not that high...
 We know try to sort apps first by 'interaction'
+
 #%%
+
 alldata.sort_values(by = ['interactions','rating'], ascending = False, inplace = True)
 a = alldata.drop(alldata[(alldata['size (MB)'] == 0)].index)#to select the first 50 popular apps
 top_interactions = a.iloc[:50,:]
 top_interactions.head(10)
+
 #%% md
+
 As we can see now the top applications have changed.
+
 #%%
+
 category_dic = app.dictionary_top(top_interactions,'category')
-top_50_catplot(category_dic)
+app.top_50_catplot(category_dic)
+
 #%%
-top_50_sizeplot(top_interactions)
+
+app.top_50_sizeplot(top_interactions)
+
 #%%
+
 print('Mean =',top_interactions['size (MB)'].mean())
 print('Standard Deviation =',top_interactions['size (MB)'].std())
+
 #%%
+
 price_top = a.iloc[:50,:]
 price_dic = app.dictionary_top(price_top,'price')
-prices = (price_top['price'].tolist())  # getting all prices
 price_dic
+
 #%% md
+
 As we can see now there is only one price for the apps in the top 50. This is something they have in common.
+
 #%%
+
 #Which Appstore is more frequent in the top 50
 store_top = a.iloc[:50,:]
 store_dic = app.dictionary_top(store_top,'store')
 store_dic
+
 #%% md
+
 All Applications also come from the same store: **Playstore**
+
 #%%
+
 #let's now put together all the most common characteristics to find apps that them them all
 top_interactions = top_interactions[top_interactions['category'] == 'Games']
 top_interactions = top_interactions.loc[(top_interactions['size (MB)'] >= 20.463256986) & (top_interactions['size (MB)'] <= 105.72074301)]
