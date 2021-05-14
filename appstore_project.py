@@ -171,10 +171,12 @@ microsoft_store['No of people Rated']=np.float32(microsoft_store['No of people R
 microsoft_store
 
 #%% md
+
 ### AppleStore
 Like we did for the previous ones, we import the dataset as a DataFrame using the Pandas' funciton '.read_csv'
 
 #%%
+
 appstore = pd.read_csv(os.path.join(data_folder,'AppleStore.csv'))
 appstore
 
@@ -189,6 +191,7 @@ appstore.columns = ["name","size (MB)","price","installs","rating","category","N
 appstore['size (MB)'] = np.float64(appstore['size (MB)'])/1000000 #convert from bytes to megabytes
 
 #%% md
+
 And we created a specific column with the purpose of identifying the store, <b>appstore</b> in this case
 
 #%%
@@ -197,27 +200,36 @@ appstore["store"] = "appstore"
 appstore['No of people Rated']= np.float64(appstore['No of people Rated'])
 
 #%% md
+
 Now it's time to merge all Dataframes together and create a new dataframe that we will use to answer our research
 questions
+
 #%%
+
 #Merge Dataframes
 alldata = pd.concat([playstore, appstore, microsoft_store])
 alldata
 
 #%% md
+
 Since not all stores had a **_'reviews'_** column we decided to create a new column named **_interactions_**
 that basically uses the **_reviews_** column in datasets that have it and the **_No of people Rated_** in
 datasets without it. This new column, together with the **_rating_** column, will be used as an **indicator** for the popularity
 of each application.
+
 #%%
+
 #Clean columns
 alldata['No of people Rated'] = alldata['No of people Rated'].fillna(0)
 alldata['reviews'] = alldata['reviews'].fillna(0)
 
 alldata['interactions'] = alldata['reviews'] + alldata['No of people Rated'] #merge 'reviews' and 'No of people rated' into 'interaction'
+
 #%% md
+
  Now we select only the column we will need and remove all rows that have 4 or more NaN values (that would be
  useless for our research)
+
 #%%
 
 alldata = alldata.loc[:,['name','price','interactions','category', 'store', 'rating', 'size (MB)']] #select only comuns we want
@@ -230,6 +242,7 @@ Now we create a dictionary with the categories we want as keys, and the subcateg
 lists of strings. Then we replace each sub-category with the main one.
 
 We did this to have common categories among all stores
+
 #%%
 
 dict_categories = {'Health & Fitness':['Beauty','Medical','Health and Fitness'],
@@ -252,8 +265,11 @@ for k,v in dict_categories.items():
         alldata['category'].replace(x, k, inplace = True) #replace sub categories with the categories we want
 
 #%% md
+
 Lastly we plot a **pie chart** using our _pie chart_ function starting from the merged dataframe
+
 #%%
+
 pie = app.pie_chart(alldata)
 
 #%% md
@@ -453,10 +469,9 @@ merged_frame
 
 #%%
 
-merged_frame.plot.barh(x='category', y='mean revenues per app ($)', color=['orange','blue'], figsize = (8,5))
+merged_frame.plot.barh(x='category', y='mean revenues per app ($)', color='orange', figsize = (8,5))
 plt.ylabel('Category', fontsize = 13)
 plt.title('Mean Application Revenue per Category', fontsize = 15)
-
 
 #%% md
 
@@ -651,91 +666,133 @@ top_50.head(10)
 
 
 #%% md
+
 Now we create two functions in our _appstore_ module:
 1. **_dictionary top_** that takes as input a _dataframe_ and a _column name_ and returns a dictionary with
 each value in the column as keys, and their frequency as values
 1. **_top 50 catplot_** that takes as input a dictionary and plots a Barchart representing
 praphically the dictionary
+
 #%%
 
 category_dic = app.dictionary_top(top_50,'category')
 app.top_50_catplot(category_dic)
+
 #%% md
+
 We found that the category **_'Games_** is the category with the highest number of apps in the top 50
 
 #%% md
+
 We now add create another function called **_top 50 sizeplot_** that takes as input a DataFrame and
 uses the _name_ and _size (MB)_ columns to plot a graph representing the size in MB of each application
+
 #%%
+
 app.top_50_sizeplot(top_50)
 
 #%% md
+
 looking at the graph we see that there are few applications that have a size much higher than the others, thus we decide
 to remove the 7 apps with the highest size to make our representation clearer
+
 #%%
+
+top_43 = top_50.copy()
 #remove the 7 applications with largest size
 for i in range(7):
-    top_50.drop(top_50['size (MB)'].idxmax(), inplace = True)
+    top_43.drop(top_43['size (MB)'].idxmax(), inplace = True)
 
 #%% md
+
 We now try re-plotting the graph using the _top 50 sizeplot_ function
+
 #%%
-app.top_50_sizeplot(top_50)
+
+app.top_50_sizeplot(top_43)
 
 #%% md
+
 The graph now is much clearer. We now find the **mean** size for the applications in the top 50
+
 #%%
-print('Mean =',top_50['size (MB)'].mean())
-print('Standard Deviation =',top_50['size (MB)'].std())
+
+print('Mean =',top_43['size (MB)'].mean())
+print('Standard Deviation =',top_43['size (MB)'].std())
+
 #%% md
+
 It seems convenient to create applications with a size of maximum **_105 MB_**
+
 #%% md
 
 We move on analyzing if most popular apps have the same pricing. To do this we firstly create another dataframe with
 only the top 50 apps, and we find the frequency for each price using the _dictionary top_ funciton we created
+
 #%%
+
 price_top = frame.iloc[:50,:]
 price_dic = app.dictionary_top(price_top,'price')
+
 #%% md
+
 We now plot the results using a new function called **_top 50 priceplot_** that takes as input a dictionary and returns
 a graphical representation of it.
+
 #%%
+
 app.top_50_priceplot(price_dic)
+
 #%% md
+
 We have found that the most frequent **price** for applications in the top 50 is **0**
 
 #### But what if a company wants to develope a **non free** application?
 We can study the best price strategy by **removing** from a new dataframe all applications with **price = 0**
+
 #%%
+
 price_top = frame.iloc[:50,:]
 price_top = price_top.drop(price_top[(price_top['price'] == 0.0)].index)
 price_dic = app.dictionary_top(price_top,'price')
 
+
 #%%
 
 app.top_50_priceplot(price_dic)
+
 #%% md
+
 **1.99$** appears to be the best option for making a premium application.
 
 #%% md
+
 Then we go ahead and try to find out if one appstore is a safer bet to make applications that will end up in the
 top 50. To do this we create a new dataframe and apply the _dictionary top_ function with respect to the **_'store'_**
 column.
+
 #%%
+
 store_top = frame.iloc[:50,:]
 store_dic = app.dictionary_top(store_top,'store')
 
 #%% md
+
 To represent the results this time we decite to plot a **pie chart**
+
 #%%
 
 plt.figure(figsize = (6,6))
 plt.pie(list(store_dic.values()),labels = list(store_dic.keys()), textprops={'fontsize': 15})
+
 #%% md
+
 **_Playstore_** has the highest number of applications among top apps
 
 Let's now **use all our findings together** and see if there are any applications with all of them
+
 #%%
+
 top_50 = top_50[top_50['category'] == 'Games']
 top_50 = top_50.loc[(top_50['size (MB)'] <= 105.320389392)]
 top_50 = top_50.loc[top_50['price'] == 0]
@@ -743,6 +800,7 @@ top_50 = top_50.loc[top_50['store'] == 'playstore']
 top_50
 
 #%% md
+
 ### Problem?
 Observing this table we see that interactions are not that high...
 We know try to sort apps by the **_'interactions'_** column first
@@ -758,38 +816,52 @@ top_interactions.head(10)
 
 As we can see now the top applications are pretty different.
 We dedice to do all the analyzis we did before with this new dataset and see what are the final results.
+
 #%% md
+
 #### What is the most common 'category' now?
+
 #%%
+
 category_dic = app.dictionary_top(top_interactions,'category')
 app.top_50_catplot(category_dic)
 
 #%% md
+
 **_'Games'_** still is the most frequent category between apps in the top 50
 
 Moving on we plot the size for each application using the _top 50 sizeplot_ function.
+
 #%%
+
 app.top_50_sizeplot(top_interactions)
 
 #%%
+
 print('Mean =',top_interactions['size (MB)'].mean())
 print('Standard Deviation =',top_interactions['size (MB)'].std())
 
 #%% md
+
 This time the graph is clear even without removing any app, one thing in common with the previous
  graph is that applciations should have a **size < 105**
 
 #%%
+
 price_top = a.iloc[:50,:]
 price_dic = app.dictionary_top(price_top,'price')
 price_dic
 
 #%% md
+
 As we can see now there is only one price for the apps in the top 50.
 
 #%% md
+
 #### To which platfrom do most apps belong to?
+
 #%%
+
 store_top = a.iloc[:50,:]
 store_dic = app.dictionary_top(store_top,'store')
 store_dic
@@ -799,7 +871,9 @@ store_dic
 This time all Applications also come from the same store: **Playstore**
 
 #%% md
+
 Let's now put all our new findings together and see what applications have them all:
+
 #%%
 
 #let's now put together all the most common characteristics to find apps that them them all
@@ -808,6 +882,7 @@ top_interactions = top_interactions.loc[(top_interactions['size (MB)'] >= 20.463
 top_interactions
 
 #%% md
+
 ### Results
 We saw that depending on how we order the dataframe results change.
 This said, looking at the results the latter method we used seems more correct,
