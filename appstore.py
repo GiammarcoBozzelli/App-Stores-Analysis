@@ -74,4 +74,38 @@ def dictionary_top(frame, column): #Marco
             dic[e] += 1
     return (dic)
 
+def top_50_catplot(dic):
+    categories = dic.keys()
+    ratings = dic.values()
+    y_pos = np.arange(len(categories))
+    plt.figure(figsize=(9, 6))
+    plt.barh(y_pos, ratings, align='center', alpha=0.5)
+    plt.yticks(y_pos, categories)
+    plt.xlabel('Number of Apps', fontsize=12)
+    plt.ylabel('Categories', fontsize=12)
+    plt.title('Which is the most common category in the top 50 apps?', fontsize=15)
+    plt.show()
+    return
+
+def top_50_sizeplot(data):
+    data.plot.bar(x="name", y="size (MB)", figsize = (15,8))
+    plt.title("Size (MB) in the top 50", fontsize = 18)
+    plt.xticks([]) # Disable xticks.
+    plt.xlabel('Applications', fontsize = 15)
+    plt.ylabel('Size in MB', fontsize = 15)
+    plt.show()
+    return
+
+def top_50_priceplot(dic):
+    price = dic.keys()
+    freq = dic.values()
+    y_pos = np.arange(len(price))
+    plt.figure(figsize = (9,6))
+    plt.barh(y_pos, freq, align='center', alpha=0.5)
+    plt.yticks(y_pos, price)
+    plt.xlabel('Frequency', fontsize = 12)
+    plt.ylabel('Prices', fontsize = 12)
+    plt.title('which is the most common category in the top 50 apps?', fontsize = 15)
+    plt.show()
+    return
 
