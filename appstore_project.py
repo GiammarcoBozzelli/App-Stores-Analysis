@@ -21,7 +21,7 @@ __[group-1-project](https://drive.google.com/drive/folders/1WpJfuIUlIh2z5hbM_b9G
 ## Data Loading and Cleaning
 **<i>(Beatrice Sibilia, Giammarco Bozzelli</i> and <i> Marco Cavaliere)**</i>
 
-Before starting, we import all the modules we will need troughout the project
+Before starting, we import all the modules we will need throughout the project
 
 #%%
 
@@ -49,7 +49,8 @@ print(data_folder,'\n', file_dir_names)
 
 #%% md
 
-Then we import the dataset from <i> 'playstore.csv' </i> directly as a DataFrame using the Pandas' function <i> '.read_csv' </i>
+Then we import the dataset from <i> 'playstore.csv' </i> directly as
+a DataFrame using the Pandas' function <i> '.read_csv' </i>
 
 #%%
 
@@ -118,7 +119,7 @@ playstore['reviews']=np.float32(playstore['reviews'])
 
 #%% md
 
-The last thing we need to do now is add a column **_'store' _** that specifies to store, this well be useful when we will merge all datasets together
+The last thing we need to do now is to add a column **_'store' _** that specifies to store, this well be useful when we will merge all datasets together
 
 #%%
 
@@ -204,9 +205,9 @@ alldata = pd.concat([playstore, appstore, microsoft_store])
 alldata
 
 #%% md
-Since not all stores had a **_'reviews'_** column we decide to create a new column named **_interactions_**
-that basically uses the **_reviews_** column in datasets that had it or the **_No of people Rated_** in
-datasets without the _reviews_ one. This new column, together with the **_rating_** column, will be used as an **indicator** for the popularity
+Since not all stores had a **_'reviews'_** column we decided to create a new column named **_interactions_**
+that basically uses the **_reviews_** column in datasets that have it and the **_No of people Rated_** in
+datasets without it. This new column, together with the **_rating_** column, will be used as an **indicator** for the popularity
 of each application.
 #%%
 #Clean columns
@@ -225,8 +226,8 @@ alldata = alldata.dropna(thresh=4) #remove rows with more than 4 NaN values
 
 #%% md
 
-Now we create a dictionary with the categories we want as keys and the subcategories we want to merge as a
-list of strings. Then we replace each sub-category with the main one.
+Now we create a dictionary with the categories we want as keys, and the subcategories we want to merge together as a
+lists of strings. Then we replace each sub-category with the main one.
 
 We did this to have common categories among all stores
 #%%
@@ -300,9 +301,9 @@ app.grafic_rating(ascateg_dict)
 
 #%% md
 
-And the **_Lifestyle_** category results as the prefered one in the _Appstore_.
+And the **_Lifestyle_** category results as the preferred one in the _Appstore_.
 
-Now it is turn for the **_Microsoftstore_**
+Now it's **_Microsoftstore_**' turn:
 
 #%%
 
@@ -807,4 +808,11 @@ top_interactions = top_interactions.loc[(top_interactions['size (MB)'] >= 20.463
 top_interactions
 
 #%% md
-## Results
+### Results
+We saw that depending on how we order the dataframe results change.
+This said, looking at the results the latter method we used seems more correct,
+thus we can say that applications in the top 50 have these characteristics in common:
+- *Category* = **Games**
+- *Size* <= **150 MB**
+- *Price* = **Free**
+- *Store* = **Playstore**
