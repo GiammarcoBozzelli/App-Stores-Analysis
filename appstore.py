@@ -1,8 +1,6 @@
 #module with all functions we need
 
-import pandas as pd
 import numpy as np
-import os.path
 import matplotlib.pyplot as plt
 
 def top_categories_weighted(data,store_type = None): #Giammarco
@@ -108,3 +106,4 @@ def top_50_priceplot(dic):
     plt.title('which is the most common category in the top 50 apps?', fontsize = 15)
     plt.show()
     return
+
